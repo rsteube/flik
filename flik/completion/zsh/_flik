@@ -16,7 +16,7 @@ _flik() {
  
     case $state in
     command)
-      _arguments "1:Command:((add\:'new entry' del\:'remove entry' update\:'update entry' list\:'list entry' login\:'login' logout\:'logout' tasks\:'list cached tasks' projects\:'list cached projects' activities\:'list cached activities' sync\:'update caches'))"
+      _arguments "1:Command:((add\:'new entry' del\:'remove entry' update\:'update entry' list\:'list entry' login\:'login' logout\:'logout' tasks\:'list cached tasks' projects\:'list cached projects' activities\:'list cached activities' sync\:'update caches' api\:'print api'))"
     ;;
     *)
         case $words[2] in
@@ -51,6 +51,10 @@ _flik() {
         ;;
         logout)
 
+        ;;
+        api)
+          _arguments \
+            '2:API:(baseService workTimeAccountingService masterDataService)'
         ;;
         *)
             _files 

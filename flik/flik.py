@@ -181,9 +181,11 @@ def comp_list():
         print "{}\:'{:1.160}'".format(id, entry.encode('utf-8'))
 
 def api():
-    print baseService()
-    print workTimeAccountingService()
-    print masterDataService()
+    print {
+        'baseService': baseService,
+        'workTimeAccountingService': workTimeAccountingService,
+        'masterDataService': masterDataService
+    }[sys.argv[2]]()
 
 def convertDate(raw_date):
     try:
