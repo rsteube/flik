@@ -6,3 +6,5 @@ RUN cd /src \
  && python setup.py install \
  && rm -rf /src
 
+CMD flik
+

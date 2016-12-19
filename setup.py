@@ -7,6 +7,7 @@ setup(name='flik',
         description='blue ant cli client',
         license='MIT',
         packages=find_packages(),
+        include_package_data=True,
         entry_points={'console_scripts': [
             'flik = flik.flik:main'
             ]},

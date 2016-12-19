@@ -212,10 +212,9 @@ def add_entry():
             billable=False,
             workTimeID=None)
 
-    #print workTimeAccountingService()
-    #print baseService()
+def completion():
+    print os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
 
-#if __name__ == "__main__":
 def main():
     global config
     config = {}
@@ -233,5 +232,6 @@ def main():
                 'add': add_entry,
                 'api': api,
                 'sync': sync,
-                'activities': activities
+                'activities': activities,
+                'completion': completion
 		}[sys.argv[1]]()
