@@ -7,3 +7,9 @@ blue ant cli client
 ```sh
 pip2 install git+https://github.com/rsteube/flik
 ```
+
+```sh
+#~/.zshrc
+fpath=($(flik completion) $fpath)
+autoload -U compinit && compinit
+```
