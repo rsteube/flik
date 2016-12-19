@@ -127,6 +127,11 @@ def tasks(project=None, dump=True):
         print '\n'.join(tasks[project].keys())
     return tasks[project]
 
+def del_entry():
+    if len(sys.argv) < 4:
+            exit(1)
+    workTimeAccountingService().service.deleteWorktime(sessionID(), sys.argv[3])
+
 def list(dump=True):
     date = convertDate(sys.argv[2] if len(sys.argv) > 2 else 'today')
 
@@ -141,11 +146,11 @@ def list(dump=True):
         #print time.date
         project = time.projectName
         task = time.taskName
-        taskID = time.taskID
+        workTimeID = time.workTimeID
         comment = time.comment
         time = (float(time.duration) / (1000*60*60))%24
         dayTime+=time
-        entries[taskID] = u"{:.2f}    {:25.25}    {:25.25}    {:50.50}".format(  time, project  , task, comment)
+        entries[workTimeID] = u"{:.2f}    {:25.25}    {:25.25}    {:50.50}".format(  time, project  , task, comment)
     if dump:
         print '\n'.join(entries.values())
         print '----'
@@ -239,7 +244,8 @@ def main():
                 'api': api,
                 'sync': sync,
                 'activities': activities,
-                'completion': completion
+                'completion': completion,
+                'del': del_entry
 		}[sys.argv[1]]()
     except WebFault, e:
         sys.stderr.write(str(e) + '\n')
