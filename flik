@@ -51,19 +51,19 @@ def loadProjects():
     writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
 
 #TODO rewrite without global variable
-tasks = {}
+alltasks = {}
 def loadTasks():
     for projectName, projectID in projects(dump=False).iteritems():
         raw_tasks = workTimeAccountingService().service.getTasks(sessionID(), projectID)
   
-        tasks[projectName] = {}
+        alltasks[projectName] = {}
         for task in raw_tasks:
             extractTasks(projectName, task)
-    writeShare('tasks.yaml', safe_dump(tasks, default_flow_style=False))
+    writeShare('tasks.yaml', safe_dump(alltasks, default_flow_style=False))
   
 def extractTasks(projectName, task, prefix=''):
     if task.worktimeAllowed:
-        tasks[projectName][quote(prefix + task.name)] = str(task.taskID)
+        alltasks[projectName][quote(prefix + task.name)] = str(task.taskID)
   
     if task.children is not None:
         for x, child in task.children:
@@ -204,4 +204,5 @@ if __name__ == "__main__":
                 'comp_list': comp_list,
                 'add': add_entry,
                 'api': api,
+                'sync': sync
 		}[sys.argv[1]]()
