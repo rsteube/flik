@@ -59,7 +59,7 @@ def loadActivities():
     activities = {}
     for activity in raw_activities:
         activities[quote(activity.name)] = str(activity.activityID)
-    writeShare('activites.yaml', safe_dump(activities, default_flow_style=False))
+    writeShare('activities.yaml', safe_dump(activities, default_flow_style=False))
 
 #TODO rewrite without global variable
 alltasks = {}
@@ -100,6 +100,12 @@ def loadConfig():
         return {}
     return safe_load(readFile(configFile))
 
+def activities(dump=True):
+    activities = safe_load(readShare('activities.yaml'))
+    if dump:
+        print '\n'.join(activities.keys())
+    return activities
+
 
 def projects(dump=True):
     projects = safe_load(readShare('projects.yaml'))
@@ -118,7 +124,6 @@ def tasks(project=None, dump=True):
         #TODO use project index
         print '\n'.join(tasks[project].keys())
     return tasks[project]
-
 
 def list(dump=True):
     if len(sys.argv) < 3:
@@ -218,5 +223,6 @@ if __name__ == "__main__":
                 'comp_list': comp_list,
                 'add': add_entry,
                 'api': api,
-                'sync': sync
+                'sync': sync,
+                'activities': activities
 		}[sys.argv[1]]()
