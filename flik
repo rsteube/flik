@@ -126,11 +126,12 @@ def tasks(project=None, dump=True):
     return tasks[project]
 
 def list(dump=True):
-    if len(sys.argv) < 3:
-        return
-    date = convertDate(sys.argv[2])
- 
-    workTimes=workTimeAccountingService().service.getPersonalWorktime(sessionID(), fromDate=date)
+    date = convertDate(sys.argv[2] if len(sys.argv) > 2 else 'today')
+
+    workTimes=workTimeAccountingService().service.getPersonalWorktime(
+            sessionID(),
+            fromDate=formatDate(date),
+            toDate=formatDate(date + relativedelta(days=1)))
 
     entries={}
     dayTime=0
@@ -159,12 +160,7 @@ def api():
     print masterDataService()
 
 def convertDate(raw_date):
-    if raw_date == 'today':
-        date = datetime.now().date()
-    elif raw_date == 'yesterday':
-        date = datetime.now().date() - relativedelta(days=1)
-    else:
-        weekday={
+    weekday={
             'monday': MO(-1),        
             'tuesday': TU(-1),        
             'wednesday': WE(-1),        
@@ -172,8 +168,18 @@ def convertDate(raw_date):
             'friday': FR(-1),        
             'saturday': SA(-1),        
             'sunday': SU(-1),        
-        }[raw_date]
-        date = datetime.now().date() + relativedelta(weekday=weekday)
+        }
+    if raw_date == 'today':
+        date = datetime.now().date()
+    elif raw_date == 'yesterday':
+        date = datetime.now().date() - relativedelta(days=1)
+    elif raw_date in weekday:
+        date = datetime.now().date() + relativedelta(weekday=weekday[raw_date])
+    else:
+        date = datetime.strptime(raw_date, '%Y-%m-%d')
+    return date
+
+def formatDate(date):
     return date.strftime('%Y-%m-%d')
 
 def sync():
@@ -197,7 +203,8 @@ def add_entry():
 
     print workTimeAccountingService().service.editWorktime(
             sessionID=sessionID(),
-            date=date,projectID=projectID,
+            date=formatDate(date),
+            projectID=projectID,
             taskID=taskID,
             activityID='9982047',
             duration=time,
