@@ -224,23 +224,19 @@ def add_entry():
     projectID=projects(dump=False)[sys.argv[3]]
     taskID=tasks(project=sys.argv[3], dump=False)[sys.argv[4]]
 
-    print float(sys.argv[5])
-
     time=(float(sys.argv[5])*60*60)
+    comment=' '.join(sys.argv[6:])
 
-    print date
-    print projectID
-    print taskID
-    print time
-
-    print workTimeAccountingService().service.editWorktime(
+    # TODO billable selection
+    # TODO activity selection
+    workTimeAccountingService().service.editWorktime(
             sessionID=sessionID(),
             date=formatDate(date),
             projectID=projectID,
             taskID=taskID,
             activityID='9982047',
             duration=time,
-            comment='test',
+            comment=comment,
             billable=False,
             workTimeID=None)
 
