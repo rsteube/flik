@@ -34,6 +34,9 @@ def readShare(filename):
 def baseService():
     return Client(config['url'] + 'BaseService?wsdl')
 
+def masterDataService():
+    return Client(config['url'] + 'MasterDataService?wsdl')
+
 def workTimeAccountingService():
     return Client(config['url'] + 'WorktimeAccountingService?wsdl')
 
@@ -49,6 +52,14 @@ def loadProjects():
     for project in raw_projects:
         projects[quote(project.name)] = str(project.projectID)
     writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
+
+def loadActivities():
+    raw_activities = masterDataService().service.getActivities(sessionID())
+
+    activities = {}
+    for activity in raw_activities:
+        activities[quote(activity.name)] = str(activity.activityID)
+    writeShare('activites.yaml', safe_dump(activities, default_flow_style=False))
 
 #TODO rewrite without global variable
 alltasks = {}
@@ -140,6 +151,7 @@ def comp_list():
 def api():
     print baseService()
     print workTimeAccountingService()
+    print masterDataService()
 
 def convertDate(raw_date):
     if raw_date == 'today':
@@ -162,6 +174,7 @@ def convertDate(raw_date):
 def sync():
     loadProjects()
     loadTasks()
+    loadActivities()
 
 def add_entry():
     date=convertDate(sys.argv[2])
@@ -170,7 +183,7 @@ def add_entry():
 
     print float(sys.argv[5])
 
-    time=(float(sys.argv[5])*(1000*60*60))
+    time=(float(sys.argv[5])*60*60)
 
     print date
     print projectID
@@ -181,6 +194,7 @@ def add_entry():
             sessionID=sessionID(),
             date=date,projectID=projectID,
             taskID=taskID,
+            activityID='9982047',
             duration=time,
             comment='test',
             billable=False,
