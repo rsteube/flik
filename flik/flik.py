@@ -215,8 +215,10 @@ def add_entry():
     #print workTimeAccountingService()
     #print baseService()
 
-config = {}
-if __name__ == "__main__":
+#if __name__ == "__main__":
+def main():
+    global config
+    config = {}
     config=loadConfig()
 
     if len(sys.argv) < 2:
