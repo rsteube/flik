@@ -171,6 +171,7 @@ def list(dump=True):
         dayTime+=time
         entries[workTimeID] = u"{:.2f}    {:25.25}    {:25.25}    {:50.50}".format(  time, project  , task, comment)
     if dump:
+        print '[%s]' % date
         print '\n'.join(entries.values())
         print '----'
         print dayTime
