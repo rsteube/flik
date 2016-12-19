@@ -1,0 +1,61 @@
+#compdef flik
+
+#TODO only call flik for currently needed completions
+
+
+date_opts='today yesterday monday tuesday wednesday thursday friday saturday sunday'
+time_opts='0.25 0.5 0.75 1.0 1.25 1.5 1.75 2.0 2.25 2.5 2.75 3.0 3.25 3.5 3.75 4.0 4.25 4.5 4.75 5.0 5.25 5.5 5.75 6.0 6.25 6.5 6.75 7.0 7.25 7.5 7.75 8.0 9.25 9.5 9.75'
+ 
+_flik() { 
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+ 
+    _arguments \
+        '1: :->command'\
+        '*: :->args'
+ 
+    case $state in
+    command)
+      _arguments "1:Command:((add\:'new entry' del\:'remove entry' update\:'update entry' list\:'list entry' login\:'login' logout\:'logout' tasks\:'list cached tasks' projects\:'list cached projects' sync\:'update caches'))"
+    ;;
+    *)
+        case $words[2] in
+        add)
+            _arguments \
+              "2:Date:($date_opts)"\
+              "3:Project:($(flik projects))"\
+              "4:Task:($(flik tasks $words[4]))"\
+              "5:Time:($time_opts)"
+        ;;
+        del)
+            _arguments \
+              "2:Date:($date_opts)"\
+              "3:Entry:(($(flik comp_list $words[3])))"
+        ;;
+        update)
+            _arguments \
+              "2:Date:($date_opts)"\
+              "3:Entry:(($(flik comp_list $words[3])))"\
+              "4:Time:($time_opts)"
+        ;;
+        list)
+            _arguments \
+              "2:Date:($date_opts)"
+        ;;
+        tasks)
+            _arguments \
+              "2:Project:($(flik projects))"
+        ;;
+        login)
+
+        ;;
+        logout)
+
+        ;;
+        *)
+            _files 
+        esac
+    esac
+}
+ 
+_flik "$@"
