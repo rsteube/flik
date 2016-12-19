@@ -5,7 +5,7 @@ blue ant cli client
 ## Install
 
 ```sh
-pip2 install git+https://github.com/rsteube/flik
+pip2 install --user git+https://github.com/rsteube/flik
 ```
 
 ```sh

@@ -5,10 +5,12 @@ from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
 from subprocess import call
 from yaml import safe_load, safe_dump
 import getpass, os, sys
+from suds import WebFault
 from suds.client import Client
 
-#import logging
-#logging.basicConfig(level=logging.DEBUG) 
+import logging
+logging.basicConfig(level=logging.CRITICAL)
+#logging.basicConfig(level=logging.DEBUG)
 
 def quote(str):
     return str.replace('&', '_').replace(' ', '_')
@@ -216,14 +218,15 @@ def completion():
     print os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
 
 def main():
-    global config
-    config = {}
-    config=loadConfig()
+    try:
+        global config
+        config = {}
+        config=loadConfig()
 
-    if len(sys.argv) < 2:
-	print 'fail'
-    else:
-	{
+        if len(sys.argv) < 2:
+	    print 'fail'
+        else:
+	    {
 		'login': login,
 		'projects': projects,
                 'tasks': tasks,
@@ -235,6 +238,8 @@ def main():
                 'activities': activities,
                 'completion': completion
 		}[sys.argv[1]]()
+    except WebFault, e:
+        sys.stderr.write(str(e) + '\n')
 
 if __name__ == "__main__":
     main()
