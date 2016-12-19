@@ -132,6 +132,25 @@ def del_entry():
             exit(1)
     workTimeAccountingService().service.deleteWorktime(sessionID(), sys.argv[3])
 
+def update_entry():
+    if len(sys.argv) < 5:
+            exit(1)
+    workTimeID=sys.argv[3]
+    duration=(float(sys.argv[4])*60*60)
+
+    current=workTimeAccountingService().service.getWorktime(sessionID(), workTimeID)[0]
+    workTimeAccountingService().service.editWorktime(
+            sessionID(),
+            date=current['date'],
+            projectID=current['projectID'],
+            comment=current['comment'],
+            activityID=current['activityID'],
+            taskID=current['taskID'],
+            billable=current['billable'],
+            workTimeID=workTimeID,
+            duration=duration)
+
+
 def list(dump=True):
     date = convertDate(sys.argv[2] if len(sys.argv) > 2 else 'today')
 
@@ -245,7 +264,8 @@ def main():
                 'sync': sync,
                 'activities': activities,
                 'completion': completion,
-                'del': del_entry
+                'del': del_entry,
+                'update': update_entry
 		}[sys.argv[1]]()
     except WebFault, e:
         sys.stderr.write(str(e) + '\n')
