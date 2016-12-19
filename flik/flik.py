@@ -235,3 +235,6 @@ def main():
                 'activities': activities,
                 'completion': completion
 		}[sys.argv[1]]()
+
+if __name__ == "__main__":
+    main()
