@@ -1,5 +1,7 @@
 # flik[WIP]
 
+[![Build Status](https://travis-ci.org/rsteube/flik.svg?branch=master)](https://travis-ci.org/rsteube/flik)
+
 blue ant cli client
 
 ![demo](demo.gif)
