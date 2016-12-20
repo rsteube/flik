@@ -11,6 +11,8 @@ pip2 install --user git+https://github.com/rsteube/flik
 
 ```sh
 #~/.zshrc
+#
+#zstyle ':completion:*' menu select
 fpath=($(flik completion) $fpath)
 autoload -U compinit && compinit
 ```
