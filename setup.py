@@ -16,5 +16,5 @@ setup(name='flik',
             'suds',
             'pyyaml'
             ],
-        zip_safe=True
+        zip_safe=False
         )

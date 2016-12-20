@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+  flik:
+    build: .
+    container_name: flik
+    hostname: flik

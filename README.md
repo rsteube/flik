@@ -14,3 +14,12 @@ pip2 install --user git+https://github.com/rsteube/flik
 fpath=($(flik completion) $fpath)
 autoload -U compinit && compinit
 ```
+
+## Demo
+
+```sh
+docker-compose run flik
+flik# flik login
+flik# flik sync
+flik# flik list
+```
