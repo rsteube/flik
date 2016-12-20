@@ -97,6 +97,9 @@ def login():
 
     writeShare('sessionID', session.sessionID)
 
+def logout():
+    baseService().service.Logout(sessionID())
+
 def loadConfig():
     configFile = os.path.expanduser('~/.config/flik/config.yaml')
     if not os.path.isfile(configFile):
@@ -283,10 +286,15 @@ def main():
                 'activities': activities,
                 'completion': completion,
                 'del': del_entry,
-                'update': update_entry
+                'update': update_entry,
+                'logout': logout
 		}[sys.argv[1]]()
     except WebFault, e:
-        sys.stderr.write(str(e) + '\n')
+        try:
+            sys.stderr.write(str(e) + '\n')
+        except:
+            # suds unicode bug
+            sys.stderr.write('Session probably expired\n')
 
 if __name__ == "__main__":
     main()
