@@ -5,3 +5,5 @@ python:
   - pypy
 install:
   - pip install .
+script:
+  - echo 'skip'
