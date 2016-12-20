@@ -116,19 +116,19 @@ def activities(dump=True):
 def projects(dump=True):
     projects = safe_load(readShare('projects.yaml'))
     if dump:
-        print '\n'.join(projects.keys())
+        print u'\n'.join(projects.keys()).encode('ascii')
     return projects
 
 def tasks(project=None, dump=True):
     if project is None:
         if len(sys.argv) < 3:
             return
-        project = sys.argv[2]
+        project = sys.argv[2].decode('utf-8')
 
     tasks = safe_load(readShare('tasks.yaml'))
     if dump:
         #TODO use project index
-        print '\n'.join(tasks[project].keys())
+        print u'\n'.join(tasks[project].keys()).encode('utf-8')
     return tasks[project]
 
 def del_entry():
@@ -245,7 +245,7 @@ def sync():
 def add_entry():
     date, _=convertDate(sys.argv[2])
     projectID=projects(dump=False)[sys.argv[3]]
-    taskID=tasks(project=sys.argv[3], dump=False)[sys.argv[4]]
+    taskID=tasks(project=sys.argv[3].decode('utf-8'), dump=False)[sys.argv[4].decode('utf-8')]
 
     activityID=activities(dump=False)[sys.argv[5]]
     billable={'billable': True,
