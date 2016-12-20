@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+import re
 from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
 
@@ -152,29 +153,41 @@ def update_entry():
 
 
 def list(dump=True):
-    date = convertDate(sys.argv[2] if len(sys.argv) > 2 else 'today')
+    fromDate, toDate = convertDate(sys.argv[2] if len(sys.argv) > 2 else 'today')
 
     workTimes=workTimeAccountingService().service.getPersonalWorktime(
             sessionID(),
-            fromDate=formatDate(date),
-            toDate=formatDate(date + relativedelta(days=1)))
+            fromDate=formatDate(fromDate),
+            toDate=formatDate(toDate))
 
     entries={}
-    dayTime=0
-    for time in workTimes:
+    entries_by_date={}
+    dayTime={}
+    for workTime in workTimes:
         #print time.date
-        project = time.projectName
-        task = time.taskName
-        workTimeID = time.workTimeID
-        comment = time.comment
-        time = (float(time.duration) / (1000*60*60))%24
-        dayTime+=time
-        entries[workTimeID] = u"{:.2f}    {:25.25}    {:25.25}    {:50.50}".format(  time, project  , task, comment)
+        project = workTime.projectName
+        task = workTime.taskName
+        workTimeID = workTime.workTimeID
+        comment = workTime.comment
+        time = (float(workTime.duration) / (1000*60*60))%24
+       
+
+        if not workTime.date in entries_by_date.keys():
+            entries_by_date[workTime.date]={}
+            dayTime[workTime.date]=0
+        dayTime[workTime.date]+=time
+        
+        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f}    {:25.25}    {:25.25}    {:50.50}".format(  time, project  , task, comment)
     if dump:
-        print '[%s]' % date
-        print '\n'.join(entries.values())
-        print '----'
-        print dayTime
+        for date, entries_for_date in entries_by_date.iteritems():
+            print '[%s]' % date
+            print '\n'.join(entries_for_date.values())
+            print '-----'
+            print dayTime[date]
+            print ''
+        if len(dayTime.values()) > 1:
+            print '====='
+            print sum(dayTime.values())
     return entries
 
 def comp_list():
@@ -205,9 +218,15 @@ def convertDate(raw_date):
             date = datetime.now().date() - relativedelta(days=1)
         elif raw_date in weekday:
             date = datetime.now().date() + relativedelta(weekday=weekday[raw_date])
+        elif re.match('\d{4}-w\d{2}', raw_date) is not None:
+            fromDate = datetime.strptime(raw_date + '-1', "%Y-W%W-%w")
+            toDate = fromDate + relativedelta(days=7)
+            return fromDate, toDate
         else:
             date = datetime.strptime(raw_date, '%Y-%m-%d')
-        return date
+        
+        toDate=date + relativedelta(days=1)
+        return date, toDate
     except:
         exit(1)
 
@@ -220,7 +239,7 @@ def sync():
     loadActivities()
 
 def add_entry():
-    date=convertDate(sys.argv[2])
+    date, _=convertDate(sys.argv[2])
     projectID=projects(dump=False)[sys.argv[3]]
     taskID=tasks(project=sys.argv[3], dump=False)[sys.argv[4]]
 
