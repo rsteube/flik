@@ -77,8 +77,16 @@ _flik() {
         ;;
         del)
             _arguments \
-              "2:Date:($date_opts)"\
-              "3:Entry:(($(flik comp_list $words[3])))"
+              '2: :->date'\
+              '3: :->entry'
+
+            case $state in
+              date)
+                _arguments "2:Date:($date_opts)"
+                ;;
+              entry)
+                _arguments "3:Entry:(($(flik comp_list $words[3])))"
+            esac
         ;;
         update)
             _arguments \
