@@ -90,9 +90,20 @@ _flik() {
         ;;
         update)
             _arguments \
-              "2:Date:($date_opts)"\
-              "3:Entry:(($(flik comp_list $words[3])))"\
-              "4:Time:($time_opts)"
+              '2: :->date'\
+              '3: :->entry'\
+              '4: :->time'
+
+            case $state in
+              date)
+                _arguments "2:Date:($date_opts)"
+                ;;
+              entry)
+                _arguments "3:Entry:(($(flik comp_list $words[3])))"
+                ;;
+              time)
+                _arguments "4:Time:($time_opts)"
+            esac
         ;;
         list)
             _arguments \
