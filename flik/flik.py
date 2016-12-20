@@ -177,7 +177,7 @@ def list(dump=True):
             dayTime[workTime.date]=0
         dayTime[workTime.date]+=time
         
-        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f}    {:25.25}    {:25.25}    {:50.50}".format(  time, project  , task, comment)
+        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f}  {:25.25}  {:25.25}  {:80.80}".format(  time, project  , task, comment)
     if dump:
         for date, entries_for_date in entries_by_date.iteritems():
             print '[%s]' % date
