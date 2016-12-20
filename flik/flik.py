@@ -116,7 +116,7 @@ def activities(dump=True):
 def projects(dump=True):
     projects = safe_load(readShare('projects.yaml'))
     if dump:
-        print u'\n'.join(projects.keys()).encode('ascii')
+        print u'\n'.join(projects.keys()).encode('utf-8')
     return projects
 
 def tasks(project=None, dump=True):
