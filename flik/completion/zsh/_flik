@@ -48,12 +48,32 @@ _flik() {
         case $words[2] in
         add)
             _arguments \
-              "2:Date:($date_opts)"\
-              "3:Project:($(flik projects))"\
-              "4:Task:($(flik tasks $words[4]))"\
-              "5:Activity:($(flik activities))"\
-              "6:Billable:(billable non_billable)"\
-              "7:Time:($time_opts)"
+              '2: :->date'\
+              '3: :->project'\
+              '4: :->task'\
+              '5: :->activity'\
+              '6: :->billable'\
+              '7: :->time'
+
+            case $state in
+              date)
+                _arguments "2:Date:($date_opts)"
+                ;;
+              project)
+                _arguments "3:Project:($(flik projects))"
+                ;;
+              task)
+                _arguments "4:Task:($(flik tasks $words[4]))"
+                ;;
+              activity)
+                _arguments "5:Activity:($(flik activities))"
+                ;;
+              billable)
+                _arguments "6:Billable:(billable non_billable)"
+                ;;
+              time)
+                _arguments "7:Time:($time_opts)"
+              esac
         ;;
         del)
             _arguments \
