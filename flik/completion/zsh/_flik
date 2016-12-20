@@ -51,7 +51,9 @@ _flik() {
               "2:Date:($date_opts)"\
               "3:Project:($(flik projects))"\
               "4:Task:($(flik tasks $words[4]))"\
-              "5:Time:($time_opts)"
+              "5:Activity:($(flik activities))"\
+              "6:Billable:(billable non_billable)"\
+              "7:Time:($time_opts)"
         ;;
         del)
             _arguments \

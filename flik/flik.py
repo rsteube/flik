@@ -246,20 +246,22 @@ def add_entry():
     projectID=projects(dump=False)[sys.argv[3]]
     taskID=tasks(project=sys.argv[3], dump=False)[sys.argv[4]]
 
-    time=(float(sys.argv[5])*60*60)
-    comment=' '.join(sys.argv[6:])
+    activityID=activities(dump=False)[sys.argv[5]]
+    billable={'billable': True,
+              'non_billable': False
+              }[sys.argv[6]]
+    time=(float(sys.argv[7])*60*60)
+    comment=' '.join(sys.argv[8:])
 
-    # TODO billable selection
-    # TODO activity selection
     workTimeAccountingService().service.editWorktime(
             sessionID=sessionID(),
             date=formatDate(date),
             projectID=projectID,
             taskID=taskID,
-            activityID='9982047',
+            activityID=activityID,
             duration=time,
+            billable=billable,
             comment=comment,
-            billable=False,
             workTimeID=None)
 
 def completion():
