@@ -244,7 +244,7 @@ def sync():
 
 def add_entry():
     date, _=convertDate(sys.argv[2])
-    projectID=projects(dump=False)[sys.argv[3]]
+    projectID=projects(dump=False)[sys.argv[3].decode('utf-8')]
     taskID=tasks(project=sys.argv[3].decode('utf-8'), dump=False)[sys.argv[4].decode('utf-8')]
 
     activityID=activities(dump=False)[sys.argv[5]]
