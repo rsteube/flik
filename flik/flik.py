@@ -184,7 +184,7 @@ def list(dump=True):
         entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f} {}  {:25.25}  {:25.25}  {:80.80}".format(time, billable, project, task, comment)
     if dump:
         for date, entries_for_date in entries_by_date.iteritems():
-            print '[%s]' % date
+            print '[%s]' % date.strftime('%Y-%m-%d %a')
             print '\n'.join(entries_for_date.values())
             print '-----'
             print dayTime[date]
