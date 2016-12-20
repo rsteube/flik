@@ -294,7 +294,7 @@ def main():
             sys.stderr.write(str(e) + '\n')
         except:
             # suds unicode bug
-            sys.stderr.write('Session probably expired\n')
+            print 'SESSION_INVALID'
 
 if __name__ == "__main__":
     main()
