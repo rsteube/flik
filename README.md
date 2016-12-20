@@ -2,6 +2,8 @@
 
 blue ant cli client
 
+![demo](demo.gif)
+
 ## Install
 
 ```sh
