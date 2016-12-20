@@ -172,6 +172,7 @@ def list(dump=True):
         task = workTime.taskName
         workTimeID = workTime.workTimeID
         comment = workTime.comment
+        billable = '$' if workTime.billable else ' '
         time = (float(workTime.duration) / (1000*60*60))%24
        
 
@@ -180,7 +181,7 @@ def list(dump=True):
             dayTime[workTime.date]=0
         dayTime[workTime.date]+=time
         
-        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f}  {:25.25}  {:25.25}  {:80.80}".format(  time, project  , task, comment)
+        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f} {}  {:25.25}  {:25.25}  {:80.80}".format(time, billable, project, task, comment)
     if dump:
         for date, entries_for_date in entries_by_date.iteritems():
             print '[%s]' % date
