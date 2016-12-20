@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='flik',
-        version='0.1',
+        version='0.2',
         description='blue ant cli client',
         license='MIT',
         packages=find_packages(),

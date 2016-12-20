@@ -9,7 +9,7 @@ blue ant cli client
 ## Install
 
 ```sh
-pip2 install --user git+https://github.com/rsteube/flik
+pip2 install --user git+https://github.com/rsteube/flik@v0.1
 # needs ~/.local/bin in $PATH
 ```
 
