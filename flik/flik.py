@@ -221,7 +221,7 @@ def add_entry():
               'non_billable': False
               }[sys.argv[6]]
     time=(float(sys.argv[7])*60*60)
-    comment=' '.join(sys.argv[8:])
+    comment=' '.join(sys.argv[8:]).decode('utf-8')
 
     workTimeAccountingService().service.editWorktime(
             sessionID=sessionID(),
