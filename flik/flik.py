@@ -175,14 +175,17 @@ def list(dump=True):
         comment = workTime.comment
         billable = '$' if workTime.billable else ' '
         time = (float(workTime.duration) / (1000*60*60))%24
-       
+        state = {0: ' ', # open
+                 1: 'L', # locked
+                 2: 'X', # rejected?
+                 }[workTime.state]
 
         if not workTime.date in entries_by_date.keys():
             entries_by_date[workTime.date]={}
             dayTime[workTime.date]=0
         dayTime[workTime.date]+=time
         
-        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f} {}  {:25.25}  {:25.25}  {:80.80}".format(time, billable, project, task, comment)
+        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f} {}{}  {:25.25}  {:25.25}  {:80.80}".format(time, billable, state, project, task, comment)
     if dump:
         for date, entries_for_date in sorted(entries_by_date.iteritems()):
             print '[%s]' % date.strftime('%Y-%m-%d %a')
