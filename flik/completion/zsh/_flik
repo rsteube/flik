@@ -1,7 +1,5 @@
 #compdef flik
 
-#TODO only call flik for currently needed completions
-
 date_opts="\
  today yesterday $(date +%Y-%m-%d)\
  monday
