@@ -1,7 +1,8 @@
 #!/usr/bin/env python2
+import flik
+from .common import dateparam
+
 import re
-from datetime import datetime
-from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
 
 from subprocess import call
 from yaml import safe_load, safe_dump
@@ -159,12 +160,12 @@ def update_entry():
 
 
 def list(dump=True):
-    fromDate, toDate = convertDate(sys.argv[2] if len(sys.argv) > 2 else 'today')
+    fromDate, toDate = dateparam.parse(sys.argv[2] if len(sys.argv) > 2 else 'today')
 
     workTimes=workTimeAccountingService().service.getPersonalWorktime(
             sessionID(),
-            fromDate=formatDate(fromDate),
-            toDate=formatDate(toDate))
+            fromDate=dateparam.format(fromDate),
+            toDate=dateparam.format(toDate))
 
     entries={}
     entries_by_date={}
@@ -208,45 +209,13 @@ def api():
         'masterDataService': masterDataService
     }[sys.argv[2]]()
 
-def convertDate(raw_date):
-    try:
-        weekday={
-                'monday': MO(-1),        
-                'tuesday': TU(-1),        
-                'wednesday': WE(-1),        
-                'thursday': TH(-1),        
-                'friday': FR(-1),        
-                'saturday': SA(-1),        
-                'sunday': SU(-1),        
-            }
-        if raw_date == 'today':
-            date = datetime.now().date()
-        elif raw_date == 'yesterday':
-            date = datetime.now().date() - relativedelta(days=1)
-        elif raw_date in weekday:
-            date = datetime.now().date() + relativedelta(weekday=weekday[raw_date])
-        elif re.match('\d{4}-w\d{2}', raw_date) is not None:
-            fromDate = datetime.strptime(raw_date + '-1', "%Y-W%W-%w")
-            toDate = fromDate + relativedelta(days=7)
-            return fromDate, toDate
-        else:
-            date = datetime.strptime(raw_date, '%Y-%m-%d')
-        
-        toDate=date + relativedelta(days=1)
-        return date, toDate
-    except:
-        exit(1)
-
-def formatDate(date):
-    return date.strftime('%Y-%m-%d')
-
 def sync():
     loadProjects()
     loadTasks()
     loadActivities()
 
 def add_entry():
-    date, _=convertDate(sys.argv[2])
+    date, _= dateparam.parse(sys.argv[2])
     projectID=projects(dump=False)[sys.argv[3].decode('utf-8')]
     taskID=tasks(project=sys.argv[3].decode('utf-8'), dump=False)[sys.argv[4].decode('utf-8')]
 
@@ -259,7 +228,7 @@ def add_entry():
 
     workTimeAccountingService().service.editWorktime(
             sessionID=sessionID(),
-            date=formatDate(date),
+            date=dateparam.format(date),
             projectID=projectID,
             taskID=taskID,
             activityID=activityID,
