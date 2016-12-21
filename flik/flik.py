@@ -13,8 +13,11 @@ import logging
 logging.basicConfig(level=logging.CRITICAL)
 #logging.basicConfig(level=logging.DEBUG)
 
-def quote(str):
-    return str.replace('&', '_').replace(' ', '_')
+def quote(toquote):
+    result = toquote
+    for character in '& _|':
+        result = result.replace(character, '_')
+    return result
 
 def writeFile(filename, content):
     file=os.path.expanduser(filename)
