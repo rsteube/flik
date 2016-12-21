@@ -1,8 +1,5 @@
 #!/usr/bin/env python2
-import flik
 from .common import dateparam
-
-import re
 
 from subprocess import call
 from yaml import safe_load, safe_dump
