@@ -246,6 +246,10 @@ def completion():
     print os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
 
 def main():
+    if len(sys.argv) == 2 and sys.argv[1] == 'completion':
+        completion()
+        exit(0)
+
     try:
         global config
         config = {}
