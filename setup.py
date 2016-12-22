@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
-
 from setuptools import setup, find_packages
+import fastentrypoints
 
 setup(name='flik',
         version='0.3',
