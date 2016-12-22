@@ -5,24 +5,20 @@ def parse():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
-    # activities
     parser_activities = subparsers.add_parser('activities', help='activities help', description='List cached activities.')
 
-    # add
-    parser_add = subparsers.add_parser('add', help='Add new Worktime entry.', description='Add new Worktime entry.')
-    parser_add.add_argument('date', metavar='date', type=str, help='the date')
-    parser_add.add_argument('project', metavar='project', type=str, help='the project')
-    parser_add.add_argument('task', metavar='task', type=str, help='the task')
-    parser_add.add_argument('activity', metavar='activity', type=str, help='the activity')
-    parser_add.add_argument('billable', metavar='billable', type=str, help='desc billable', choices=['billable', 'non_billable'])
-    parser_add.add_argument('duration', metavar='duration', type=float, help='desc duration')
-    parser_add.add_argument('comment', metavar='comment', type=str, nargs='+', help='desc duration')
+    parser_add = subparsers.add_parser('add', help='Add new Worktime entry', description='Add new Worktime entry')
+    parser_add.add_argument('date', metavar='date', type=str, help='date either as weekday, relative date, date (e.g. "monday", "today", "2016-12-12")')
+    parser_add.add_argument('project', metavar='project', type=str, help='project name (flik projects)')
+    parser_add.add_argument('task', metavar='task', type=str, help='task name (flik tasks)')
+    parser_add.add_argument('activity', metavar='activity', type=str, help='activy name (flik activities)')
+    parser_add.add_argument('billable', metavar='billable', type=str, help='billable', choices=['billable', 'non_billable'])
+    parser_add.add_argument('duration', metavar='duration', type=float, help='duration in hours')
+    parser_add.add_argument('comment', metavar='comment', type=str, nargs='+', help='comment')
 
-    # api
     parser_api = subparsers.add_parser('api', help='api help', description='Print api.')
     parser_api.add_argument('service', metavar='service', type=str, help='service to print')
 
-    # del
     parser_del = subparsers.add_parser('del', help='del help', description='Delete Worktime entry.')
     parser_del.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
     parser_del.add_argument('workTimeID', metavar='workTimeID', type=str, help='id to delete')
@@ -32,8 +28,8 @@ def parse():
     
     parser_completion = subparsers.add_parser('completion', help='completion help', description='TODO')
 
-    parser_list = subparsers.add_parser('list', help='list help', description='TODO')
-    parser_list.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
+    parser_list = subparsers.add_parser('list', help='List Worktime entries for date', description='List Worktime entries for date')
+    parser_list.add_argument('date', metavar='date', nargs='?', type=dateparam.parse, help='date or calendar week')
 
     parser_login = subparsers.add_parser('login', help='login help', description='TODO')
 
@@ -52,4 +48,3 @@ def parse():
     parser_update.add_argument('duration', metavar='duration', type=float, help='desc duration')
 
     return parser.parse_args()
-
