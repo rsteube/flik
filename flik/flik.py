@@ -189,7 +189,7 @@ def comp_list(date):
     for id, entry in entries.iteritems():
         print "{}\:'{:1.160}'".format(id, entry.encode('utf-8'))
     if len(entries) == 1:
-        print "0\:'none'"
+        print "none"
 
 
 def api(service):
