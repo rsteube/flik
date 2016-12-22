@@ -15,7 +15,7 @@ setup(name='flik',
             'python-dateutil',
             'suds',
             'pyyaml',
-            'setuptools'>=30,
+            'setuptools>=30',
             ],
         zip_safe=False
         )
