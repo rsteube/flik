@@ -14,7 +14,8 @@ setup(name='flik',
         install_requires=[
             'python-dateutil',
             'suds',
-            'pyyaml'
+            'pyyaml',
+            'setuptools'>=30,
             ],
         zip_safe=False
         )
