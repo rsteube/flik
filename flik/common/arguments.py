@@ -27,15 +27,10 @@ def parse():
     parser_del.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
     parser_del.add_argument('workTimeID', metavar='workTimeID', type=str, help='id to delete')
     
-    
-    parser_update = subparsers.add_parser('update', help='update help', description='Update Worktime entry.')
-    parser_update.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
-    parser_update.add_argument('workTimeID', metavar='workTimeID', type=str, help='id to delete')
-    parser_update.add_argument('duration', metavar='duration', type=float, help='desc duration')
-
-
     parser_comp_list = subparsers.add_parser('comp_list', help='comp_list help', description='TODO')
     parser_comp_list.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
+    
+    parser_completion = subparsers.add_parser('completion', help='completion help', description='TODO')
 
     parser_list = subparsers.add_parser('list', help='list help', description='TODO')
     parser_list.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
@@ -51,7 +46,10 @@ def parse():
     parser_tasks = subparsers.add_parser('tasks', help='tasks help', description='TODO')
     parser_tasks.add_argument('project', metavar='project', type=str, help='the project')
 
-    parser_completion = subparsers.add_parser('completion', help='completion help', description='TODO')
+    parser_update = subparsers.add_parser('update', help='update help', description='Update Worktime entry.')
+    parser_update.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
+    parser_update.add_argument('workTimeID', metavar='workTimeID', type=str, help='id to delete')
+    parser_update.add_argument('duration', metavar='duration', type=float, help='desc duration')
 
     return parser.parse_args()
 
