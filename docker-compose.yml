@@ -3,5 +3,6 @@ version: '2'
 services:
   flik:
     build: .
+    image: rsteube/flik:dev
     container_name: flik
     hostname: flik
