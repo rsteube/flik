@@ -16,10 +16,16 @@ def parse():
     parser_add.add_argument('duration', metavar='duration', type=float, help='duration in hours')
     parser_add.add_argument('comment', metavar='comment', type=str, nargs='+', help='comment')
 
-    parser_api = subparsers.add_parser('api', help='api help', description='Print api.')
+    parser_api = subparsers.add_parser('api', help='Print api service', description='Print api service')
     parser_api.add_argument('service', metavar='service', type=str, help='service to print')
 
-    parser_del = subparsers.add_parser('del', help='del help', description='Delete Worktime entry.')
+    parser_copy = subparsers.add_parser('copy', help='Copy Worktime entry', description='Copy Worktime entry')
+    parser_copy.add_argument('from_date', metavar='from_date', type=dateparam.parse, help='the date')
+    parser_copy.add_argument('workTimeID', metavar='workTimeID', type=str, help='id to delete')
+    parser_copy.add_argument('to_date', metavar='to_date', type=dateparam.parse, help='the date')
+    parser_copy.add_argument('duration', metavar='duration', type=float, help='duration in hours')
+    
+    parser_del = subparsers.add_parser('del', help='Delete Worktime entry', description='Delete Worktime entry.')
     parser_del.add_argument('date', metavar='date', type=dateparam.parse, help='the date')
     parser_del.add_argument('workTimeID', metavar='workTimeID', type=str, help='id to delete')
     
@@ -28,7 +34,7 @@ def parse():
     
     parser_completion = subparsers.add_parser('completion', help='completion help', description='TODO')
 
-    parser_list = subparsers.add_parser('list', help='List Worktime entries for date', description='List Worktime entries for date')
+    parser_list = subparsers.add_parser('list', help='List Worktime entries', description='List Worktime entries')
     parser_list.add_argument('date', metavar='date', nargs='?', default='today', type=dateparam.parse, help='date or calendar week')
 
     parser_login = subparsers.add_parser('login', help='login help', description='TODO')

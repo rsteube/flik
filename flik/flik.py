@@ -200,6 +200,21 @@ def sync():
     loadTasks()
     loadActivities()
 
+def copy_entry(from_date, workTimeID, to_date, duration):
+    current=workTimeAccountingService().service.getWorktime(sessionID(),workTimeID)[0]
+    
+    workTimeAccountingService().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(to_date[0]),
+            projectID=current['projectID'],
+            taskID=current['taskID'],
+            activityID=current['activityID'],
+            duration=(float(duration)*60*60),
+            billable=current['billable'],
+            comment=current['comment'],
+            workTimeID=None)
+
+
 def add_entry(date, project, task, activity, billable, duration, comment):
     projectID=projects(dump=False)[project.decode('utf-8')]
     taskID=tasks(project=project.decode('utf-8'), dump=False)[task.decode('utf-8')]
@@ -220,6 +235,8 @@ def add_entry(date, project, task, activity, billable, duration, comment):
             billable=billable,
             comment=comment,
             workTimeID=None)
+
+    print {'project': project, 'task': task, 'activity': activity, 'billable': billable, 'comment': comment}
 
 def completion():
     print os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
@@ -245,7 +262,8 @@ def main():
             'completion': completion,
             'del': del_entry,
             'update': update_entry,
-            'logout': logout
+            'logout': logout,
+            'copy': copy_entry
 	}[sys.argv[1]](**parsed_args)
     except WebFault, e:
         try:
