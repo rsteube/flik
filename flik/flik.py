@@ -121,28 +121,16 @@ def projects(dump=True):
     return projects
 
 def tasks(project=None, dump=True):
-    if project is None:
-        if len(sys.argv) < 3:
-            return
-        project = sys.argv[2].decode('utf-8')
-
     tasks = safe_load(readShare('tasks.yaml'))
     if dump:
         #TODO use project index
-        print u'\n'.join(tasks[project].keys()).encode('utf-8')
-    return tasks[project]
+        print u'\n'.join(tasks[project.decode('utf-8')].keys()).encode('utf-8')
+    return tasks[project.decode('utf-8')]
 
-def del_entry():
-    if len(sys.argv) < 4:
-            exit(1)
-    workTimeAccountingService().service.deleteWorktime(sessionID(), sys.argv[3])
+def del_entry(workTimeID, date='ignored'):
+    workTimeAccountingService().service.deleteWorktime(sessionID(), workTimeID)
 
-def update_entry():
-    if len(sys.argv) < 5:
-            exit(1)
-    workTimeID=sys.argv[3]
-    duration=(float(sys.argv[4])*60*60)
-
+def update_entry(date, workTimeID, duration):
     current=workTimeAccountingService().service.getWorktime(sessionID(), workTimeID)[0]
     workTimeAccountingService().service.editWorktime(
             sessionID(),
@@ -153,16 +141,14 @@ def update_entry():
             taskID=current['taskID'],
             billable=current['billable'],
             workTimeID=workTimeID,
-            duration=duration)
+            duration=float(duration)*60*60)
 
 
-def list(dump=True):
-    fromDate, toDate = dateparam.parse(sys.argv[2] if len(sys.argv) > 2 else 'today')
-
+def list(date, dump=True):
     workTimes=workTimeAccountingService().service.getPersonalWorktime(
             sessionID(),
-            fromDate=dateparam.format(fromDate),
-            toDate=dateparam.format(toDate))
+            fromDate=dateparam.format(date[0]),
+            toDate=dateparam.format(date[1]))
 
     entries={}
     entries_by_date={}
@@ -198,41 +184,39 @@ def list(dump=True):
             print sum(dayTime.values())
     return entries
 
-def comp_list():
-    for id, entry in list(dump=False).iteritems():
+def comp_list(date):
+    for id, entry in list(date, dump=False).iteritems():
         print "{}\:'{:1.160}'".format(id, entry.encode('utf-8'))
 
-def api():
+def api(service):
     print {
         'baseService': baseService,
         'workTimeAccountingService': workTimeAccountingService,
         'masterDataService': masterDataService
-    }[sys.argv[2]]()
+    }[service]()
 
 def sync():
     loadProjects()
     loadTasks()
     loadActivities()
 
-def add_entry():
-    date, _= dateparam.parse(sys.argv[2])
-    projectID=projects(dump=False)[sys.argv[3].decode('utf-8')]
-    taskID=tasks(project=sys.argv[3].decode('utf-8'), dump=False)[sys.argv[4].decode('utf-8')]
+def add_entry(date, project, task, activity, billable, duration, comment):
+    projectID=projects(dump=False)[project.decode('utf-8')]
+    taskID=tasks(project=project.decode('utf-8'), dump=False)[task.decode('utf-8')]
 
-    activityID=activities(dump=False)[sys.argv[5]]
+    activityID=activities(dump=False)[activity]
     billable={'billable': True,
               'non_billable': False
-              }[sys.argv[6]]
-    time=(float(sys.argv[7])*60*60)
-    comment=' '.join(sys.argv[8:]).decode('utf-8')
+              }[billable]
+    comment=' '.join(comment).decode('utf-8')
 
     workTimeAccountingService().service.editWorktime(
             sessionID=sessionID(),
-            date=dateparam.format(date),
+            date=dateparam.format(date[0]),
             projectID=projectID,
             taskID=taskID,
             activityID=activityID,
-            duration=time,
+            duration=(float(duration)*60*60),
             billable=billable,
             comment=comment,
             workTimeID=None)
@@ -262,7 +246,7 @@ def main():
             'del': del_entry,
             'update': update_entry,
             'logout': logout
-	}[sys.argv[1]]()
+	}[sys.argv[1]](**parsed_args)
     except WebFault, e:
         try:
             sys.stderr.write(str(e) + '\n')
