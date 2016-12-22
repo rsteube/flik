@@ -82,7 +82,7 @@ _flik() {
 
             case $state in
               from_date)
-                _arguments "2:FromDate:($date_opts)"
+                _arguments "2:FromDate:($date_opts $(date +%Y-w%V))"
                 ;;
               entry)
                 _arguments "3:Entry:(($(flik comp_list $words[3])))"
