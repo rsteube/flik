@@ -248,24 +248,21 @@ def main():
 
         parsed_args = arguments.parse()
 
-        if len(sys.argv) < 2:
-	    print 'fail'
-        else:
-	    {
-		'login': login,
-		'projects': projects,
-                'tasks': tasks,
-                'list': list,
-                'comp_list': comp_list,
-                'add': add_entry,
-                'api': api,
-                'sync': sync,
-                'activities': activities,
-                'completion': completion,
-                'del': del_entry,
-                'update': update_entry,
-                'logout': logout
-		}[sys.argv[1]]()
+	{
+	    'login': login,
+	    'projects': projects,
+            'tasks': tasks,
+            'list': list,
+            'comp_list': comp_list,
+            'add': add_entry,
+            'api': api,
+            'sync': sync,
+            'activities': activities,
+            'completion': completion,
+            'del': del_entry,
+            'update': update_entry,
+            'logout': logout
+	}[sys.argv[1]]()
     except WebFault, e:
         try:
             sys.stderr.write(str(e) + '\n')
