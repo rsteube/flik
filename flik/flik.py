@@ -240,8 +240,6 @@ def add_entry(date, project, task, activity, billable, duration, comment):
             comment=comment,
             workTimeID=None)
 
-    print {'project': project, 'task': task, 'activity': activity, 'billable': billable, 'comment': comment}
-
 def completion():
     print os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
 
