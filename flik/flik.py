@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from .common import dateparam, arguments
+from .common import dateparam, arguments, config
 
 from subprocess import call
 from yaml import safe_load, safe_dump
@@ -36,13 +36,13 @@ def readShare(filename):
     return readFile('~/.local/share/flik/' + filename)
 
 def baseService():
-    return Client(config['url'] + 'BaseService?wsdl')
+    return Client(config.load()['url'] + 'BaseService?wsdl')
 
 def masterDataService():
-    return Client(config['url'] + 'MasterDataService?wsdl')
+    return Client(config.load()['url'] + 'MasterDataService?wsdl')
 
 def workTimeAccountingService():
-    return Client(config['url'] + 'WorktimeAccountingService?wsdl')
+    return Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
 
 def sessionID():
     file=os.path.expanduser('~/.local/share/flik/sessionID')
@@ -87,25 +87,14 @@ def extractTasks(projectName, task, prefix=''):
                     extractTasks(projectName, x, task.name + '__')
 
 def login():
-    configFile = os.path.expanduser('~/.config/flik/config.yaml')
-    if not os.path.isfile(configFile):
-        config['url'] = 'https://' + raw_input('URL (https://${URL}/blueant/services): ') + '/blueant/services/'
-        config['username'] = raw_input('Username: ')
-        writeFile(configFile, safe_dump(config, default_flow_style=False))
-
+    conf = config.load() or config.reconfigure()
     password = getpass.getpass()
-    session=baseService().service.Login(config['username'], password)
-
+    
+    session=baseService().service.Login(conf['username'], password)
     writeShare('sessionID', session.sessionID)
 
 def logout():
     baseService().service.Logout(sessionID())
-
-def loadConfig():
-    configFile = os.path.expanduser('~/.config/flik/config.yaml')
-    if not os.path.isfile(configFile):
-        return {}
-    return safe_load(readFile(configFile))
 
 def activities(dump=True):
     activities = safe_load(readShare('activities.yaml'))
@@ -249,10 +238,6 @@ def main():
         exit(0)
 
     try:
-        global config
-        config = {}
-        config=loadConfig()
-
         parsed_args = arguments.parse()
 
 	{
