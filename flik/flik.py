@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from .common import dateparam, arguments, config
+from .common import dateparam, arguments, config, storage
 
 from subprocess import call
 from yaml import safe_load, safe_dump
@@ -17,24 +17,6 @@ def quote(toquote):
         result = result.replace(character, '_')
     return result
 
-def writeFile(filename, content):
-    file=os.path.expanduser(filename)
-    if not os.path.exists(os.path.dirname(file)):
-	os.makedirs(os.path.dirname(file))
-
-    with open(file, 'w') as out:
-	out.write(content)
-
-def readFile(filename):
-    file=os.path.expanduser(filename)
-    return open(file, 'r').read()
-
-def writeShare(filename, content):
-    writeFile('~/.local/share/flik/' + filename, content)
-
-def readShare(filename):
-    return readFile('~/.local/share/flik/' + filename)
-
 def baseService():
     return Client(config.load()['url'] + 'BaseService?wsdl')
 
@@ -45,9 +27,7 @@ def workTimeAccountingService():
     return Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
 
 def sessionID():
-    file=os.path.expanduser('~/.local/share/flik/sessionID')
-    with open(file, 'r') as loaded:
-	return loaded.read()
+    return storage.readShare('sessionID')
 
 def loadProjects():
     raw_projects = workTimeAccountingService().service.getProjects(sessionID())
@@ -55,7 +35,7 @@ def loadProjects():
     projects = {}
     for project in raw_projects:
         projects[quote(project.name)] = str(project.projectID)
-    writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
+    storage.writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
 
 def loadActivities():
     raw_activities = masterDataService().service.getActivities(sessionID())
@@ -63,7 +43,7 @@ def loadActivities():
     activities = {}
     for activity in raw_activities:
         activities[quote(activity.name)] = str(activity.activityID)
-    writeShare('activities.yaml', safe_dump(activities, default_flow_style=False))
+    storage.writeShare('activities.yaml', safe_dump(activities, default_flow_style=False))
 
 #TODO rewrite without global variable
 alltasks = {}
@@ -74,7 +54,7 @@ def loadTasks():
         alltasks[projectName] = {}
         for task in raw_tasks:
             extractTasks(projectName, task)
-    writeShare('tasks.yaml', safe_dump(alltasks, default_flow_style=False))
+    storage.writeShare('tasks.yaml', safe_dump(alltasks, default_flow_style=False))
   
 def extractTasks(projectName, task, prefix=''):
     if task.worktimeAllowed:
@@ -91,26 +71,26 @@ def login():
     password = getpass.getpass()
     
     session=baseService().service.Login(conf['username'], password)
-    writeShare('sessionID', session.sessionID)
+    storage.writeShare('sessionID', session.sessionID)
 
 def logout():
     baseService().service.Logout(sessionID())
 
 def activities(dump=True):
-    activities = safe_load(readShare('activities.yaml'))
+    activities = safe_load(storage.readShare('activities.yaml'))
     if dump:
         print '\n'.join(activities.keys())
     return activities
 
 
 def projects(dump=True):
-    projects = safe_load(readShare('projects.yaml'))
+    projects = safe_load(storage.readShare('projects.yaml'))
     if dump:
         print u'\n'.join(projects.keys()).encode('utf-8')
     return projects
 
 def tasks(project=None, dump=True):
-    tasks = safe_load(readShare('tasks.yaml'))
+    tasks = safe_load(storage.readShare('tasks.yaml'))
     if dump:
         #TODO use project index
         print u'\n'.join(tasks[project.decode('utf-8')].keys()).encode('utf-8')
