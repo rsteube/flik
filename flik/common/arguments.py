@@ -27,18 +27,17 @@ def parse():
 def add_activities_parser(subparsers):
     subparsers.add_parser('activities', help='list cached activities')
 
-def add_add_parser(subparsers):
-    def parse_billable(arg):
-        {'billable': True, 'non_billable': False}[arg]
 
+def add_add_parser(subparsers):
     parser = subparsers.add_parser('add', help='add Worktime')
     parser.add_argument('date', type=dateparam.parse)
     parser.add_argument('project')
     parser.add_argument('task')
     parser.add_argument('activity')
-    parser.add_argument('billable', type=parse_billable)
+    parser.add_argument('billable', type=lambda x: ['billable', 'non_billable'].index(x) == 0)
     parser.add_argument('duration', type=float)
     parser.add_argument('comment', nargs='+')
+
 
 def add_api_parser(subparsers):
     parser = subparsers.add_parser('api', help='print api')
@@ -60,7 +59,8 @@ def add_del_parser(subparsers):
 
 
 def add_comp_list_parser(subparsers):
-    parser = subparsers.add_parser('comp_list', help='zsh completion for tasks')
+    parser = subparsers.add_parser(
+        'comp_list', help='zsh completion for tasks')
     parser.add_argument('date', type=dateparam.parse)
 
 
@@ -70,7 +70,8 @@ def add_completion_parser(subparsers):
 
 def add_list_parser(subparsers):
     parser = subparsers.add_parser('list', help='list Worktime')
-    parser.add_argument('date', nargs='?', default='today', type=dateparam.parse)
+    parser.add_argument(
+        'date', nargs='?', default='today', type=dateparam.parse)
 
 
 def add_login_parser(subparsers):
