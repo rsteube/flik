@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+from .client import baseService
 from .common import dateparam, arguments, config, storage
 
 from subprocess import call
@@ -16,9 +17,6 @@ def quote(toquote):
     for character in '& _|':
         result = result.replace(character, '_')
     return result
-
-def baseService():
-    return Client(config.load()['url'] + 'BaseService?wsdl')
 
 def masterDataService():
     return Client(config.load()['url'] + 'MasterDataService?wsdl')
@@ -70,11 +68,11 @@ def login():
     conf = config.load() or config.reconfigure()
     password = getpass.getpass()
     
-    session=baseService().service.Login(conf['username'], password)
+    session=baseService.client().service.Login(conf['username'], password)
     storage.writeShare('sessionID', session.sessionID)
 
 def logout():
-    baseService().service.Logout(sessionID())
+    baseService.client().service.Logout(sessionID())
 
 def activities(dump=True):
     activities = safe_load(storage.readShare('activities.yaml'))
@@ -163,7 +161,7 @@ def comp_list(date):
 
 def api(service):
     print {
-        'baseService': baseService,
+        'baseService': baseService.client,
         'workTimeAccountingService': workTimeAccountingService,
         'masterDataService': masterDataService
     }[service]()
