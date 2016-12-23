@@ -2,19 +2,13 @@
 from .client import baseService, masterDataService, workTimeAccountingService
 from .common import dateparam, arguments, config, storage
 
-from yaml import safe_load, safe_dump
 import os, sys
+from yaml import safe_load, safe_dump
 from suds import WebFault
 
 import logging
 logging.basicConfig(level=logging.CRITICAL)
 #logging.basicConfig(level=logging.DEBUG)
-
-def quote(toquote):
-    result = toquote
-    for character in '& _|':
-        result = result.replace(character, '_')
-    return result
 
 def sessionID():
     return storage.readShare('sessionID')
