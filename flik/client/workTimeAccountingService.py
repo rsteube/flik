@@ -7,21 +7,20 @@ def client():
     return Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
 
 def syncProjects():
-    raw_projects = client().service.getProjects(sessionID())
     projects = {}
-    for project in raw_projects:
+    for project in client().service.getProjects(sessionID()):
         projects[quote(project.name)] = str(project.projectID)
+    
     storage.writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
 
 def syncTasks():
-    alltasks={}
+    tasks={}
     for projectName, projectID in projects().iteritems():
-        raw_tasks = client().service.getTasks(sessionID(), projectID)
+        tasks[projectName] = {}
+        for task in client().service.getTasks(sessionID(), projectID):
+            tasks[projectName].update(extractTasks(task))
     
-        alltasks[projectName] = {}
-        for task in raw_tasks:
-            alltasks[projectName].update(extractTasks(task))
-    storage.writeShare('tasks.yaml', safe_dump(alltasks, default_flow_style=False))
+    storage.writeShare('tasks.yaml', safe_dump(tasks, default_flow_style=False))
   
 def extractTasks(task, prefix=''):
     result = {}
