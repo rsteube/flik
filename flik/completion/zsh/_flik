@@ -18,17 +18,17 @@ time_opts="\
  9.25 9.5 9.75"
  
 command_opts="\
-  add\\:'new entry'\
-  del\\:'remove entry'\
-  update\\:'update entry'\
-  list\\:'list entry'\
+  add\\:'add new Worktime'\
+  del\\:'delete Worktime'\
+  update\\:'update Worktime'\
+  list\\:'list Worktimes'\
   login\\:'login'\
   logout\\:'logout'\
   tasks\\:'list cached tasks'\
   projects\\:'list cached projects'\
   activities\\:'list cached activities'\
   sync\\:'update caches'\
-  copy\\:'copy entry'\
+  copy\\:'copy Worktime'\
   api\\:'print api'"
 
 _flik() { 

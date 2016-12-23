@@ -6,116 +6,96 @@ def parse():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
-    parser_activities = subparsers.add_parser(
-        'activities',
-        help='activities help',
-        description='List cached activities.')
-
-    parser_add = subparsers.add_parser(
-        'add',
-        help='Add new Worktime entry',
-        description='Add new Worktime entry')
-    parser_add.add_argument(
-        'date',
-        metavar='date',
-        type=dateparam.parse,
-        help='date either as weekday, relative date, date (e.g. "monday", "today", "2016-12-12")'
-    )
-    parser_add.add_argument(
-        'project',
-        metavar='project',
-        type=str,
-        help='project name (flik projects)')
-    parser_add.add_argument(
-        'task', metavar='task', type=str, help='task name (flik tasks)')
-    parser_add.add_argument(
-        'activity',
-        metavar='activity',
-        type=str,
-        help='activy name (flik activities)')
-    parser_add.add_argument(
-        'billable',
-        metavar='billable',
-        type=str,
-        help='billable',
-        choices=['billable', 'non_billable'])
-    parser_add.add_argument(
-        'duration', metavar='duration', type=float, help='duration in hours')
-    parser_add.add_argument(
-        'comment', metavar='comment', type=str, nargs='+', help='comment')
-
-    parser_api = subparsers.add_parser(
-        'api', help='Print api service', description='Print api service')
-    parser_api.add_argument(
-        'service', metavar='service', type=str, help='service to print')
-
-    parser_copy = subparsers.add_parser(
-        'copy', help='Copy Worktime entry', description='Copy Worktime entry')
-    parser_copy.add_argument(
-        'from_date',
-        metavar='from_date',
-        type=dateparam.parse,
-        help='the date')
-    parser_copy.add_argument(
-        'workTimeID', metavar='workTimeID', type=str, help='id to delete')
-    parser_copy.add_argument(
-        'to_date', metavar='to_date', type=dateparam.parse, help='the date')
-    parser_copy.add_argument(
-        'duration', metavar='duration', type=float, help='duration in hours')
-
-    parser_del = subparsers.add_parser(
-        'del',
-        help='Delete Worktime entry',
-        description='Delete Worktime entry.')
-    parser_del.add_argument(
-        'date', metavar='date', type=dateparam.parse, help='the date')
-    parser_del.add_argument(
-        'workTimeID', metavar='workTimeID', type=str, help='id to delete')
-
-    parser_comp_list = subparsers.add_parser(
-        'comp_list', help='comp_list help', description='TODO')
-    parser_comp_list.add_argument(
-        'date', metavar='date', type=dateparam.parse, help='the date')
-
-    parser_completion = subparsers.add_parser(
-        'completion', help='completion help', description='TODO')
-
-    parser_list = subparsers.add_parser(
-        'list',
-        help='List Worktime entries',
-        description='List Worktime entries')
-    parser_list.add_argument(
-        'date',
-        metavar='date',
-        nargs='?',
-        default='today',
-        type=dateparam.parse,
-        help='date or calendar week')
-
-    parser_login = subparsers.add_parser(
-        'login', help='login help', description='TODO')
-
-    parser_logout = subparsers.add_parser(
-        'logout', help='logout help', description='TODO')
-
-    parser_projects = subparsers.add_parser(
-        'projects', help='projects help', description='TODO')
-
-    parser_sync = subparsers.add_parser(
-        'sync', help='sync help', description='TODO')
-
-    parser_tasks = subparsers.add_parser(
-        'tasks', help='tasks help', description='TODO')
-    parser_tasks.add_argument(
-        'project', metavar='project', type=str, help='the project')
-
-    parser_update = subparsers.add_parser(
-        'update', help='update help', description='Update Worktime entry.')
-    parser_update.add_argument(
-        'date', metavar='date', type=dateparam.parse, help='the date')
-    parser_update.add_argument(
-        'workTimeID', metavar='workTimeID', type=str, help='id to delete')
-    parser_update.add_argument(
-        'duration', metavar='duration', type=float, help='desc duration')
+    add_activities_parser(subparsers)
+    add_add_parser(subparsers)
+    add_api_parser(subparsers)
+    add_copy_parser(subparsers)
+    add_del_parser(subparsers)
+    add_comp_list_parser(subparsers)
+    add_completion_parser(subparsers)
+    add_list_parser(subparsers)
+    add_login_parser(subparsers)
+    add_logout_parser(subparsers)
+    add_projects_parser(subparsers)
+    add_sync_parser(subparsers)
+    add_tasks_parser(subparsers)
+    add_update_parser(subparsers)
 
     return vars(parser.parse_args())
+
+
+def add_activities_parser(subparsers):
+    subparsers.add_parser('activities', help='list cached activities')
+
+def add_add_parser(subparsers):
+    def parse_billable(arg):
+        {'billable': True, 'non_billable': False}[arg]
+
+    parser = subparsers.add_parser('add', help='add Worktime')
+    parser.add_argument('date', type=dateparam.parse)
+    parser.add_argument('project')
+    parser.add_argument('task')
+    parser.add_argument('activity')
+    parser.add_argument('billable', type=parse_billable)
+    parser.add_argument('duration', type=float)
+    parser.add_argument('comment', nargs='+')
+
+def add_api_parser(subparsers):
+    parser = subparsers.add_parser('api', help='print api')
+    parser.add_argument('service')
+
+
+def add_copy_parser(subparsers):
+    parser = subparsers.add_parser('copy', help='copy worktime')
+    parser.add_argument('from_date', type=dateparam.parse)
+    parser.add_argument('workTimeID')
+    parser.add_argument('to_date', type=dateparam.parse)
+    parser.add_argument('duration', type=float)
+
+
+def add_del_parser(subparsers):
+    parser = subparsers.add_parser('del', help='delete Worktime')
+    parser.add_argument('date', type=dateparam.parse)
+    parser.add_argument('workTimeID')
+
+
+def add_comp_list_parser(subparsers):
+    parser = subparsers.add_parser('comp_list', help='zsh completion for tasks')
+    parser.add_argument('date', type=dateparam.parse)
+
+
+def add_completion_parser(subparsers):
+    subparsers.add_parser('completion', help='show path to completion')
+
+
+def add_list_parser(subparsers):
+    parser = subparsers.add_parser('list', help='list Worktime')
+    parser.add_argument('date', nargs='?', default='today', type=dateparam.parse)
+
+
+def add_login_parser(subparsers):
+    subparsers.add_parser('login', help='login')
+
+
+def add_logout_parser(subparsers):
+    subparsers.add_parser('logout', help='logout')
+
+
+def add_projects_parser(subparsers):
+    subparsers.add_parser('projects', help='list cached projects')
+
+
+def add_sync_parser(subparsers):
+    subparsers.add_parser('sync', help='update caches')
+
+
+def add_tasks_parser(subparsers):
+    parser = subparsers.add_parser('tasks', help='list cached tasks')
+    parser.add_argument('project')
+
+
+def add_update_parser(subparsers):
+    parser = subparsers.add_parser('update', help='update Worktime')
+    parser.add_argument('date', type=dateparam.parse)
+    parser.add_argument('workTimeID')
+    parser.add_argument('duration', type=float)
