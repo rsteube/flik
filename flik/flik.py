@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from .client import baseService, masterDataService
+from .client import baseService, masterDataService, workTimeAccountingService
 from .common import dateparam, arguments, config, storage
 
 from subprocess import call
@@ -18,40 +18,8 @@ def quote(toquote):
         result = result.replace(character, '_')
     return result
 
-def workTimeAccountingService():
-    return Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
-
 def sessionID():
     return storage.readShare('sessionID')
-
-def loadProjects():
-    raw_projects = workTimeAccountingService().service.getProjects(sessionID())
-
-    projects = {}
-    for project in raw_projects:
-        projects[quote(project.name)] = str(project.projectID)
-    storage.writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
-
-#TODO rewrite without global variable
-alltasks = {}
-def loadTasks():
-    for projectName, projectID in projects(dump=False).iteritems():
-        raw_tasks = workTimeAccountingService().service.getTasks(sessionID(), projectID)
-  
-        alltasks[projectName] = {}
-        for task in raw_tasks:
-            extractTasks(projectName, task)
-    storage.writeShare('tasks.yaml', safe_dump(alltasks, default_flow_style=False))
-  
-def extractTasks(projectName, task, prefix=''):
-    if task.worktimeAllowed:
-        alltasks[projectName][quote(prefix + task.name)] = str(task.taskID)
-  
-    if task.children is not None:
-        for x, child in task.children:
-            if child is not None:
-                for x in child:
-                    extractTasks(projectName, x, task.name + '__')
 
 def activities(dump=True):
     activities = safe_load(storage.readShare('activities.yaml'))
@@ -74,11 +42,11 @@ def tasks(project=None, dump=True):
     return tasks[project.decode('utf-8')]
 
 def del_entry(workTimeID, date='ignored'):
-    workTimeAccountingService().service.deleteWorktime(sessionID(), workTimeID)
+    workTimeAccountingService.client().service.deleteWorktime(sessionID(), workTimeID)
 
 def update_entry(date, workTimeID, duration):
-    current=workTimeAccountingService().service.getWorktime(sessionID(), workTimeID)[0]
-    workTimeAccountingService().service.editWorktime(
+    current=workTimeAccountingService.client().service.getWorktime(sessionID(), workTimeID)[0]
+    workTimeAccountingService.client().service.editWorktime(
             sessionID(),
             date=current['date'],
             projectID=current['projectID'],
@@ -91,7 +59,7 @@ def update_entry(date, workTimeID, duration):
 
 
 def list(date, dump=True):
-    workTimes=workTimeAccountingService().service.getPersonalWorktime(
+    workTimes=workTimeAccountingService.client().service.getPersonalWorktime(
             sessionID(),
             fromDate=dateparam.format(date[0]),
             toDate=dateparam.format(date[1]))
@@ -141,19 +109,19 @@ def comp_list(date):
 def api(service):
     print {
         'baseService': baseService.client,
-        'workTimeAccountingService': workTimeAccountingService,
+        'workTimeAccountingService': workTimeAccountingService.client,
         'masterDataService': masterDataService.client
     }[service]()
 
 def sync():
-    loadProjects()
-    loadTasks()
+    workTimeAccountingService.syncProjects()
+    workTimeAccountingService.syncTasks()
     masterDataService.syncActivities()
 
 def copy_entry(from_date, workTimeID, to_date, duration):
-    current=workTimeAccountingService().service.getWorktime(sessionID(),workTimeID)[0]
+    current=workTimeAccountingService.client().service.getWorktime(sessionID(),workTimeID)[0]
     
-    workTimeAccountingService().service.editWorktime(
+    workTimeAccountingService.client().service.editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(to_date[0]),
             projectID=current['projectID'],
@@ -175,7 +143,7 @@ def add_entry(date, project, task, activity, billable, duration, comment):
               }[billable]
     comment=' '.join(comment).decode('utf-8')
 
-    workTimeAccountingService().service.editWorktime(
+    workTimeAccountingService.client().service.editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(date[0]),
             projectID=projectID,

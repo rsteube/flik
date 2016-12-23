@@ -1,6 +1,7 @@
 import getpass
 from suds.client import Client
 from ..common import config, storage
+from ..common.util import sessionID
 
 def client():
     return Client(config.load()['url'] + 'BaseService?wsdl')
@@ -13,5 +14,5 @@ def login():
     storage.writeShare('sessionID', session.sessionID)
 
 def logout():
-    client().service.Logout(storage.readShare('sessionID'))
+    client().service.Logout(sessionID())
 
