@@ -1,6 +1,6 @@
 from suds.client import Client
 from yaml import safe_dump, safe_load
-from ..common import config, storage
+from ..common import config, storage, dateparam
 from ..common.util import quote, sessionID
 
 def client():
@@ -33,6 +33,63 @@ def extractTasks(task, prefix=''):
                 for x in child:
                     result.update(extractTasks(x, task.name + '__'))
     return result
+
+
+def add(date, project, task, activity, billable, duration, comment):
+    projectID = projects()[project.decode('utf-8')]
+    taskID = tasks()[project.decode('utf-8')][task.decode('utf-8')]
+    activityID = activities()[activity]
+
+    billable = {'billable': True, 'non_billable': False}[billable]
+    comment = ' '.join(comment).decode('utf-8')
+  
+    client().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(date[0]),
+            projectID=projectID,
+            taskID=taskID,
+            activityID=activityID,
+            duration=(float(duration)*60*60),
+            billable=billable,
+            comment=comment,
+            workTimeID=None)
+
+
+def copy(from_date, workTimeID, to_date, duration):
+    current=client().service.getWorktime(sessionID(),workTimeID)[0]
+  
+    client().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(to_date[0]),
+            projectID=current['projectID'],
+            taskID=current['taskID'],
+            activityID=current['activityID'],
+            duration=(float(duration)*60*60),
+            billable=current['billable'],
+            comment=current['comment'],
+            workTimeID=None)
+
+def delete(workTimeID, date):
+    client().service.deleteWorktime(sessionID(), workTimeID)
+
+def update(date, workTimeID, duration):
+    current = client().service.getWorktime(sessionID(), workTimeID)[0]
+    client().service.editWorktime(
+            sessionID(),
+            date=current['date'],
+            projectID=current['projectID'],
+            comment=current['comment'],
+            activityID=current['activityID'],
+            taskID=current['taskID'],
+            billable=current['billable'],
+            workTimeID=workTimeID,
+            duration=float(duration)*60*60)
  
+def activities():
+    return safe_load(storage.readShare('activities.yaml'))
+
 def projects():
     return safe_load(storage.readShare('projects.yaml'))
+
+def tasks():
+    return safe_load(storage.readShare('tasks.yaml'))

@@ -39,23 +39,6 @@ def tasks(project=None, dump=True):
         print u'\n'.join(tasks[project.decode('utf-8')].keys()).encode('utf-8')
     return tasks[project.decode('utf-8')]
 
-def del_entry(workTimeID, date='ignored'):
-    workTimeAccountingService.client().service.deleteWorktime(sessionID(), workTimeID)
-
-def update_entry(date, workTimeID, duration):
-    current=workTimeAccountingService.client().service.getWorktime(sessionID(), workTimeID)[0]
-    workTimeAccountingService.client().service.editWorktime(
-            sessionID(),
-            date=current['date'],
-            projectID=current['projectID'],
-            comment=current['comment'],
-            activityID=current['activityID'],
-            taskID=current['taskID'],
-            billable=current['billable'],
-            workTimeID=workTimeID,
-            duration=float(duration)*60*60)
-
-
 def list(date, dump=True):
     workTimes=workTimeAccountingService.client().service.getPersonalWorktime(
             sessionID(),
@@ -116,48 +99,12 @@ def sync():
     workTimeAccountingService.syncTasks()
     masterDataService.syncActivities()
 
-def copy_entry(from_date, workTimeID, to_date, duration):
-    current=workTimeAccountingService.client().service.getWorktime(sessionID(),workTimeID)[0]
-    
-    workTimeAccountingService.client().service.editWorktime(
-            sessionID=sessionID(),
-            date=dateparam.format(to_date[0]),
-            projectID=current['projectID'],
-            taskID=current['taskID'],
-            activityID=current['activityID'],
-            duration=(float(duration)*60*60),
-            billable=current['billable'],
-            comment=current['comment'],
-            workTimeID=None)
-
-
-def add_entry(date, project, task, activity, billable, duration, comment):
-    projectID=projects(dump=False)[project.decode('utf-8')]
-    taskID=tasks(project=project.decode('utf-8'), dump=False)[task.decode('utf-8')]
-
-    activityID=activities(dump=False)[activity]
-    billable={'billable': True,
-              'non_billable': False
-              }[billable]
-    comment=' '.join(comment).decode('utf-8')
-
-    workTimeAccountingService.client().service.editWorktime(
-            sessionID=sessionID(),
-            date=dateparam.format(date[0]),
-            projectID=projectID,
-            taskID=taskID,
-            activityID=activityID,
-            duration=(float(duration)*60*60),
-            billable=billable,
-            comment=comment,
-            workTimeID=None)
-
 def completion():
-    print os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
+    return os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == 'completion':
-        completion()
+        print completion()
         exit(0)
 
     try:
@@ -169,15 +116,15 @@ def main():
             'tasks': tasks,
             'list': list,
             'comp_list': comp_list,
-            'add': add_entry,
+            'add': workTimeAccountingService.add,
             'api': api,
             'sync': sync,
             'activities': activities,
             'completion': completion,
-            'del': del_entry,
-            'update': update_entry,
+            'del': workTimeAccountingService.delete,
+            'update': workTimeAccountingService.update,
             'logout': baseService.logout,
-            'copy': copy_entry
+            'copy': workTimeAccountingService.copy
 	}[sys.argv[1]](**parsed_args)
     except WebFault, e:
         try:
