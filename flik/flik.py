@@ -2,11 +2,9 @@
 from .client import baseService, masterDataService, workTimeAccountingService
 from .common import dateparam, arguments, config, storage
 
-from subprocess import call
 from yaml import safe_load, safe_dump
-import getpass, os, sys
+import os, sys
 from suds import WebFault
-from suds.client import Client
 
 import logging
 logging.basicConfig(level=logging.CRITICAL)
