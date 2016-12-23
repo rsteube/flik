@@ -8,10 +8,13 @@ from suds import WebFault
 
 import logging
 logging.basicConfig(level=logging.CRITICAL)
+
 #logging.basicConfig(level=logging.DEBUG)
+
 
 def sessionID():
     return storage.readShare('sessionID')
+
 
 def activities(dump=True):
     activities = safe_load(storage.readShare('activities.yaml'))
@@ -26,6 +29,7 @@ def projects(dump=True):
         print u'\n'.join(projects.keys()).encode('utf-8')
     return projects
 
+
 def tasks(project=None, dump=True):
     tasks = safe_load(storage.readShare('tasks.yaml'))
     if dump:
@@ -33,15 +37,16 @@ def tasks(project=None, dump=True):
         print u'\n'.join(tasks[project.decode('utf-8')].keys()).encode('utf-8')
     return tasks[project.decode('utf-8')]
 
-def list(date, dump=True):
-    workTimes=workTimeAccountingService.client().service.getPersonalWorktime(
-            sessionID(),
-            fromDate=dateparam.format(date[0]),
-            toDate=dateparam.format(date[1]))
 
-    entries={}
-    entries_by_date={}
-    dayTime={}
+def list(date, dump=True):
+    workTimes = workTimeAccountingService.client().service.getPersonalWorktime(
+        sessionID(),
+        fromDate=dateparam.format(date[0]),
+        toDate=dateparam.format(date[1]))
+
+    entries = {}
+    entries_by_date = {}
+    dayTime = {}
     for workTime in workTimes:
         #print time.date
         project = workTime.projectName
@@ -49,18 +54,21 @@ def list(date, dump=True):
         workTimeID = workTime.workTimeID
         comment = workTime.comment
         billable = '$' if workTime.billable else ' '
-        time = (float(workTime.duration) / (1000*60*60))%24
-        state = {0: ' ', # open
-                 1: 'L', # locked
-                 2: 'X', # rejected?
-                 }[workTime.state]
+        time = (float(workTime.duration) / (1000 * 60 * 60)) % 24
+        state = {
+            0: ' ',  # open
+            1: 'L',  # locked
+            2: 'X',  # rejected?
+        }[workTime.state]
 
         if not workTime.date in entries_by_date.keys():
-            entries_by_date[workTime.date]={}
-            dayTime[workTime.date]=0
-        dayTime[workTime.date]+=time
-        
-        entries_by_date[workTime.date][workTimeID] = entries[workTimeID] = u"{:.2f} {}{}  {:25.25}  {:25.25}  {:80.80}".format(time, billable, state, project, task, comment)
+            entries_by_date[workTime.date] = {}
+            dayTime[workTime.date] = 0
+        dayTime[workTime.date] += time
+
+        entries_by_date[workTime.date][workTimeID] = entries[
+            workTimeID] = u"{:.2f} {}{}  {:25.25}  {:25.25}  {:80.80}".format(
+                time, billable, state, project, task, comment)
     if dump:
         for date, entries_for_date in sorted(entries_by_date.iteritems()):
             print '[%s]' % date.strftime('%Y-%m-%d %a')
@@ -72,6 +80,7 @@ def list(date, dump=True):
             print '====='
             print sum(dayTime.values())
     return entries
+
 
 def comp_list(date):
     entries = list(date, dump=False)
@@ -90,13 +99,16 @@ def api(service):
         'projectsService': projectsService.client
     }[service]()
 
+
 def sync():
     workTimeAccountingService.syncProjects()
     workTimeAccountingService.syncTasks()
     masterDataService.syncActivities()
 
+
 def completion():
     return os.path.dirname(os.path.realpath(__file__)) + '/completion/zsh'
+
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == 'completion':
@@ -106,9 +118,9 @@ def main():
     try:
         parsed_args = arguments.parse()
 
-	{
-	    'login': baseService.login,
-	    'projects': projects,
+        {
+            'login': baseService.login,
+            'projects': projects,
             'tasks': tasks,
             'list': list,
             'comp_list': comp_list,
@@ -121,11 +133,10 @@ def main():
             'update': workTimeAccountingService.update,
             'logout': baseService.logout,
             'copy': workTimeAccountingService.copy
-	}[sys.argv[1]](**parsed_args)
+        }[sys.argv[1]](**parsed_args)
     except WebFault, e:
         try:
             sys.stderr.write(str(e) + '\n')
         except:
             # suds unicode bug
             print 'SESSION_INVALID'
-
