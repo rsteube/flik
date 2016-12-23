@@ -134,7 +134,7 @@ _flik() {
         ;;
         api)
           _arguments \
-            '2:API:(baseService workTimeAccountingService masterDataService)'
+            '2:API:(baseService workTimeAccountingService masterDataService humanService projectsService)'
         ;;
         esac
     esac

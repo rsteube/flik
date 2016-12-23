@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from .client import baseService, masterDataService, workTimeAccountingService
+from .client import baseService, masterDataService, workTimeAccountingService, humanService, projectsService
 from .common import dateparam, arguments, config, storage
 
 import os, sys
@@ -85,7 +85,9 @@ def api(service):
     print {
         'baseService': baseService.client,
         'workTimeAccountingService': workTimeAccountingService.client,
-        'masterDataService': masterDataService.client
+        'masterDataService': masterDataService.client,
+        'humanService': humanService.client,
+        'projectsService': projectsService.client
     }[service]()
 
 def sync():
