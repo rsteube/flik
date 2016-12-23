@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from .client import baseService
+from .client import baseService, masterDataService
 from .common import dateparam, arguments, config, storage
 
 from subprocess import call
@@ -18,9 +18,6 @@ def quote(toquote):
         result = result.replace(character, '_')
     return result
 
-def masterDataService():
-    return Client(config.load()['url'] + 'MasterDataService?wsdl')
-
 def workTimeAccountingService():
     return Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
 
@@ -34,14 +31,6 @@ def loadProjects():
     for project in raw_projects:
         projects[quote(project.name)] = str(project.projectID)
     storage.writeShare('projects.yaml', safe_dump(projects, default_flow_style=False))
-
-def loadActivities():
-    raw_activities = masterDataService().service.getActivities(sessionID())
-
-    activities = {}
-    for activity in raw_activities:
-        activities[quote(activity.name)] = str(activity.activityID)
-    storage.writeShare('activities.yaml', safe_dump(activities, default_flow_style=False))
 
 #TODO rewrite without global variable
 alltasks = {}
@@ -153,13 +142,13 @@ def api(service):
     print {
         'baseService': baseService.client,
         'workTimeAccountingService': workTimeAccountingService,
-        'masterDataService': masterDataService
+        'masterDataService': masterDataService.client
     }[service]()
 
 def sync():
     loadProjects()
     loadTasks()
-    loadActivities()
+    masterDataService.syncActivities()
 
 def copy_entry(from_date, workTimeID, to_date, duration):
     current=workTimeAccountingService().service.getWorktime(sessionID(),workTimeID)[0]
