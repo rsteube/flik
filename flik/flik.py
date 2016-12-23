@@ -64,16 +64,6 @@ def extractTasks(projectName, task, prefix=''):
                 for x in child:
                     extractTasks(projectName, x, task.name + '__')
 
-def login():
-    conf = config.load() or config.reconfigure()
-    password = getpass.getpass()
-    
-    session=baseService.client().service.Login(conf['username'], password)
-    storage.writeShare('sessionID', session.sessionID)
-
-def logout():
-    baseService.client().service.Logout(sessionID())
-
 def activities(dump=True):
     activities = safe_load(storage.readShare('activities.yaml'))
     if dump:
@@ -219,7 +209,7 @@ def main():
         parsed_args = arguments.parse()
 
 	{
-	    'login': login,
+	    'login': baseService.login,
 	    'projects': projects,
             'tasks': tasks,
             'list': list,
@@ -231,7 +221,7 @@ def main():
             'completion': completion,
             'del': del_entry,
             'update': update_entry,
-            'logout': logout,
+            'logout': baseService.logout,
             'copy': copy_entry
 	}[sys.argv[1]](**parsed_args)
     except WebFault, e:
