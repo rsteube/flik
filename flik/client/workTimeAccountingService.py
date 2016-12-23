@@ -48,7 +48,6 @@ def add(date, project, task, activity, billable, duration, comment):
     taskID = tasks()[project.decode('utf-8')][task.decode('utf-8')]
     activityID = activities()[activity]
 
-    billable = {'billable': True, 'non_billable': False}[billable]
     comment = ' '.join(comment).decode('utf-8')
 
     client().service.editWorktime(
