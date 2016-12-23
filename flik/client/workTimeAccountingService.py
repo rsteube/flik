@@ -5,7 +5,10 @@ from ..common.util import quote, sessionID
 
 
 def client():
-    return Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
+    global service
+    if not 'service' in globals():
+        service =  Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
+    return service
 
 
 def syncProjects():
