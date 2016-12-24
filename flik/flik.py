@@ -139,9 +139,11 @@ def main():
             'logout': baseService.logout,
             'copy': workTimeAccountingService.copy
         }[sys.argv[1]](**parsed_args)
-    except WebFault, e:
+    except WebFault as e:
         try:
             sys.stderr.write(str(e) + '\n')
         except:
             # suds unicode bug
             print 'SESSION_INVALID'
+    except BaseException as e:
+        sys.stderr.write(str(e) + '\n')
