@@ -12,7 +12,7 @@ def syncActivities():
     raw_activities = client().service.getActivities(sessionID())
 
     activities = {}
-    for activity in raw_activities:
+    for activity in filter(lambda x: x.active, raw_activities):
         activities[quote(activity.name)] = str(activity.activityID)
     storage.writeShare(
         'activities.yaml', safe_dump(
