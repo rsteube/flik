@@ -67,7 +67,7 @@ _flik() {
                 _arguments "5:Activity:($(flik activities))"
                 ;;
               billable)
-                _arguments "6:Billable:(billable non_billable)"
+                _arguments "6:Billable:($(flik comp_billable ${words[4]}))"
                 ;;
               time)
                 _arguments "7:Time:($time_opts)"

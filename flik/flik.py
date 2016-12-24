@@ -81,6 +81,10 @@ def list(date, dump=True):
             print sum(dayTime.values())
     return entries
 
+def comp_billable(project):
+    if projects(dump=False)[project]['billable']:
+        print 'billable'
+    print 'non_billable'
 
 def comp_list(date):
     entries = list(date, dump=False)
@@ -123,6 +127,7 @@ def main():
             'projects': projects,
             'tasks': tasks,
             'list': list,
+            'comp_billable': comp_billable,
             'comp_list': comp_list,
             'add': workTimeAccountingService.add,
             'api': api,

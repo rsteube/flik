@@ -11,6 +11,7 @@ def parse():
     add_api_parser(subparsers)
     add_copy_parser(subparsers)
     add_del_parser(subparsers)
+    add_comp_billable_parser(subparsers)
     add_comp_list_parser(subparsers)
     add_completion_parser(subparsers)
     add_list_parser(subparsers)
@@ -34,7 +35,8 @@ def add_add_parser(subparsers):
     parser.add_argument('project')
     parser.add_argument('task')
     parser.add_argument('activity')
-    parser.add_argument('billable', type=lambda x: ['billable', 'non_billable'].index(x) == 0)
+    parser.add_argument(
+        'billable', type=lambda x: ['billable', 'non_billable'].index(x) == 0)
     parser.add_argument('duration', type=float)
     parser.add_argument('comment', nargs='+')
 
@@ -56,6 +58,12 @@ def add_del_parser(subparsers):
     parser = subparsers.add_parser('del', help='delete Worktime')
     parser.add_argument('date', type=dateparam.parse)
     parser.add_argument('workTimeID')
+
+
+def add_comp_billable_parser(subparsers):
+    parser = subparsers.add_parser(
+        'comp_billable', help='zsh completion for billable')
+    parser.add_argument('project')
 
 
 def add_comp_list_parser(subparsers):

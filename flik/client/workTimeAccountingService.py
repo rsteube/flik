@@ -14,7 +14,9 @@ def client():
 def syncProjects():
     projects = {}
     for project in client().service.getProjects(sessionID()):
-        projects[quote(project.name)] = str(project.projectID)
+        projects[quote(project.name)] = {
+                'id': str(project.projectID),
+                'billable': project.billable}
 
     storage.writeShare(
         'projects.yaml', safe_dump(
@@ -23,9 +25,9 @@ def syncProjects():
 
 def syncTasks():
     tasks = {}
-    for projectName, projectID in projects().iteritems():
+    for projectName, x in projects().iteritems():
         tasks[projectName] = {}
-        for task in client().service.getTasks(sessionID(), projectID):
+        for task in client().service.getTasks(sessionID(), x['id']):
             tasks[projectName].update(extractTasks(task))
 
     storage.writeShare(
@@ -47,7 +49,7 @@ def extractTasks(task, prefix=''):
 
 
 def add(date, project, task, activity, billable, duration, comment):
-    projectID = projects()[project.decode('utf-8')]
+    projectID = projects()[project.decode('utf-8')]['id']
     taskID = tasks()[project.decode('utf-8')][task.decode('utf-8')]
     activityID = activities()[activity]
 
