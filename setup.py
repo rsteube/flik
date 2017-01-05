@@ -4,7 +4,7 @@ import fastentrypoints
 
 setup(
     name='flik',
-    version='0.4',
+    version='0.6',
     description='blue ant cli client',
     license='MIT',
     packages=find_packages(),
@@ -14,5 +14,6 @@ setup(
         'python-dateutil',
         'suds',
         'pyyaml',
+        'keyring',
     ],
     zip_safe=False)

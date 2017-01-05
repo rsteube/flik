@@ -1,4 +1,4 @@
-import getpass
+import getpass, keyring
 from suds.client import Client
 from ..common import config, storage
 from ..common.util import sessionID
@@ -9,12 +9,17 @@ def client():
 
 
 def login():
-    conf = config.load() or config.reconfigure()
-    password = getpass.getpass()
+    username = (config.load() or config.reconfigure())['username']
+    password = keyring.get_password('flik', username) or getpass.getpass()
 
-    session = client().service.Login(conf['username'], password)
+    session = client().service.Login(username, password)
     storage.writeShare('sessionID', session.sessionID)
+    keyring.set_password('flik', username, password)
 
 
 def logout():
+    try:
+        keyring.delete_password('flik', config.load()['username'])
+    except:
+        pass
     client().service.Logout(sessionID())
