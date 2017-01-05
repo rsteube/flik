@@ -18,8 +18,5 @@ def login():
 
 
 def logout():
-    try:
-        keyring.delete_password('flik', config.load()['username'])
-    except:
-        pass
+    keyring.delete_password('flik', config.load()['username'])
     client().service.Logout(sessionID())
