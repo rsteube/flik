@@ -2,6 +2,7 @@ from suds.client import Client
 from yaml import safe_dump, safe_load
 from ..common import config, storage, dateparam
 from ..common.util import quote, sessionID
+from .baseService import autologin
 
 
 def client():
@@ -11,6 +12,7 @@ def client():
     return service
 
 
+@autologin
 def syncProjects():
     projects = {}
     for project in client().service.getProjects(sessionID()):
@@ -23,6 +25,7 @@ def syncProjects():
             projects, default_flow_style=False))
 
 
+@autologin
 def syncTasks():
     tasks = {}
     for projectName, x in projects().iteritems():
@@ -33,7 +36,6 @@ def syncTasks():
     storage.writeShare(
         'tasks.yaml', safe_dump(
             tasks, default_flow_style=False))
-
 
 def extractTasks(task, prefix=''):
     result = {}
@@ -48,6 +50,7 @@ def extractTasks(task, prefix=''):
     return result
 
 
+@autologin
 def add(date, project, task, activity, billable, duration, comment):
     projectID = projects()[project.decode('utf-8')]['id']
     taskID = tasks()[project.decode('utf-8')][task.decode('utf-8')]
@@ -67,6 +70,7 @@ def add(date, project, task, activity, billable, duration, comment):
         workTimeID=None)
 
 
+@autologin
 def copy(from_date, workTimeID, to_date, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
 
@@ -82,10 +86,12 @@ def copy(from_date, workTimeID, to_date, duration):
         workTimeID=None)
 
 
+@autologin
 def delete(workTimeID, date):
     client().service.deleteWorktime(sessionID(), workTimeID)
 
 
+@autologin
 def update(date, workTimeID, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
     client().service.editWorktime(

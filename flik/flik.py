@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 from .client import baseService, masterDataService, workTimeAccountingService, humanService, projectsService
+from .client.baseService import autologin
 from .common import dateparam, arguments, config, storage
 
 import os, sys
@@ -38,6 +39,7 @@ def tasks(project=None, dump=True):
     return tasks[project.decode('utf-8')]
 
 
+@autologin
 def list(date, dump=True):
     workTimes = workTimeAccountingService.client().service.getPersonalWorktime(
         sessionID(),
