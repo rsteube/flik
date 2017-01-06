@@ -21,6 +21,20 @@ fpath=($(flik completion) $fpath)
 autoload -U compinit && compinit
 ```
 
+### Windows
+
+- install [Babun]
+- update cygwin `$HOME/.babun/update.bat` (https://github.com/babun/babun/issues/720)
+- start [Babun] and enter:
+
+```bash
+curl -sSL https://bootstrap.pypa.io/get-pip.py | python
+pip2 install git+https://github.com/rsteube/flik
+pip2 install keyrings.alt
+sed -i '1ifpath=($(flik completion) $fpath)\' ~/.zshrc
+```
+- restart [Babun]
+
 ## Demo
 
 ```sh
@@ -29,3 +43,5 @@ flik# flik login
 flik# flik sync
 flik# flik list
 ```
+
+[Babun]:https://babun.github.io/
