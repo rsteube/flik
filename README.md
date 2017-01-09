@@ -30,7 +30,6 @@ autoload -U compinit && compinit
 ```bash
 curl -sSL https://bootstrap.pypa.io/get-pip.py | python
 pip2 install git+https://github.com/rsteube/flik
-pip2 install keyrings.alt
 sed -i '1ifpath=($(flik completion) $fpath)\' ~/.zshrc
 ```
 - restart [Babun]

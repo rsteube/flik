@@ -15,5 +15,6 @@ setup(
         'suds',
         'pyyaml',
         'keyring',
+        'keyrings.alt'
     ],
     zip_safe=False)
