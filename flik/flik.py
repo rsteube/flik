@@ -1,23 +1,18 @@
 #!/usr/bin/env python2
-from .client import baseService, masterDataService, workTimeAccountingService, humanService, projectsService
-from .client.baseService import autologin
-from .common import dateparam, arguments, config, storage
-
 import os, sys
-from yaml import safe_load, safe_dump
-from suds import WebFault
-
 import logging
+
 logging.basicConfig(level=logging.CRITICAL)
 
-#logging.basicConfig(level=logging.DEBUG)
-
-
 def sessionID():
+    from .common import storage
     return storage.readShare('sessionID')
 
 
 def activities(dump=True):
+    from yaml import safe_load
+    from .common import storage
+
     activities = safe_load(storage.readShare('activities.yaml'))
     if dump:
         print '\n'.join(activities.keys())
@@ -25,6 +20,9 @@ def activities(dump=True):
 
 
 def projects(dump=True):
+    from yaml import safe_load
+    from .common import storage
+
     projects = safe_load(storage.readShare('projects.yaml'))
     if dump:
         print u'\n'.join(projects.keys()).encode('utf-8')
@@ -32,56 +30,65 @@ def projects(dump=True):
 
 
 def tasks(project=None, dump=True):
+    from yaml import safe_load
+    from .common import storage
+
     tasks = safe_load(storage.readShare('tasks.yaml'))
     if dump:
         #TODO use project index
         print u'\n'.join(tasks[project.decode('utf-8')].keys()).encode('utf-8')
     return tasks[project.decode('utf-8')]
 
+def _list(date, dump=True):
+    from .client import workTimeAccountingService
+    from .client.baseService import autologin
+    from .common import dateparam
+    
+    @autologin
+    def __list(date, dump=True):
+        workTimes = workTimeAccountingService.client().service.getPersonalWorktime(
+            sessionID(),
+            fromDate=dateparam.format(date[0]),
+            toDate=dateparam.format(date[1]))
+    
+        entries = {}
+        entries_by_date = {}
+        dayTime = {}
+        for workTime in workTimes:
+            #print time.date
+            project = workTime.projectName
+            task = workTime.taskName
+            workTimeID = workTime.workTimeID
+            comment = workTime.comment
+            billable = '$' if workTime.billable else ' '
+            time = (float(workTime.duration) / (1000 * 60 * 60)) % 24
+            state = {
+                0: ' ',  # open
+                1: 'L',  # locked
+                2: 'X',  # rejected?
+            }[workTime.state]
+    
+            if not workTime.date in entries_by_date.keys():
+                entries_by_date[workTime.date] = {}
+                dayTime[workTime.date] = 0
+            dayTime[workTime.date] += time
+    
+            entries_by_date[workTime.date][workTimeID] = entries[
+                workTimeID] = u"{:.2f} {}{}  {:25.25}  {:25.25}  {:80.80}".format(
+                    time, billable, state, project, task, comment)
+        if dump:
+            for date, entries_for_date in sorted(entries_by_date.iteritems()):
+                print '[%s]' % date.strftime('%Y-%m-%d %a')
+                print '\n'.join(entries_for_date.values())
+                print '-----'
+                print dayTime[date]
+                print ''
+            if len(dayTime.values()) > 1:
+                print '====='
+                print sum(dayTime.values())
+        return entries
 
-@autologin
-def list(date, dump=True):
-    workTimes = workTimeAccountingService.client().service.getPersonalWorktime(
-        sessionID(),
-        fromDate=dateparam.format(date[0]),
-        toDate=dateparam.format(date[1]))
-
-    entries = {}
-    entries_by_date = {}
-    dayTime = {}
-    for workTime in workTimes:
-        #print time.date
-        project = workTime.projectName
-        task = workTime.taskName
-        workTimeID = workTime.workTimeID
-        comment = workTime.comment
-        billable = '$' if workTime.billable else ' '
-        time = (float(workTime.duration) / (1000 * 60 * 60)) % 24
-        state = {
-            0: ' ',  # open
-            1: 'L',  # locked
-            2: 'X',  # rejected?
-        }[workTime.state]
-
-        if not workTime.date in entries_by_date.keys():
-            entries_by_date[workTime.date] = {}
-            dayTime[workTime.date] = 0
-        dayTime[workTime.date] += time
-
-        entries_by_date[workTime.date][workTimeID] = entries[
-            workTimeID] = u"{:.2f} {}{}  {:25.25}  {:25.25}  {:80.80}".format(
-                time, billable, state, project, task, comment)
-    if dump:
-        for date, entries_for_date in sorted(entries_by_date.iteritems()):
-            print '[%s]' % date.strftime('%Y-%m-%d %a')
-            print '\n'.join(entries_for_date.values())
-            print '-----'
-            print dayTime[date]
-            print ''
-        if len(dayTime.values()) > 1:
-            print '====='
-            print sum(dayTime.values())
-    return entries
+    return __list(date, dump)
 
 def comp_billable(project):
     if projects(dump=False)[project]['billable']:
@@ -89,7 +96,7 @@ def comp_billable(project):
     print 'non_billable'
 
 def comp_list(date):
-    entries = list(date, dump=False)
+    entries = _list(date, dump=False)
     for id, entry in entries.iteritems():
         print "{}\:'{:1.160}'".format(id, entry.encode('utf-8'))
     if len(entries) == 1:
@@ -97,6 +104,8 @@ def comp_list(date):
 
 
 def api(service):
+    from .client import baseService, masterDataService, workTimeAccountingService, humanService, projectsService
+
     print {
         'baseService': baseService.client,
         'workTimeAccountingService': workTimeAccountingService.client,
@@ -107,6 +116,7 @@ def api(service):
 
 
 def sync():
+    from .client import masterDataService, workTimeAccountingService
     workTimeAccountingService.syncProjects()
     workTimeAccountingService.syncTasks()
     masterDataService.syncActivities()
@@ -121,31 +131,57 @@ def main():
         print completion()
         exit(0)
 
+    def _add(**kwargs):
+        from .client import workTimeAccountingService
+        workTimeAccountingService.add(**kwargs)
+    
+    def _del(**kwargs):
+        from .client import workTimeAccountingService
+        workTimeAccountingService.delete(**kwargs)
+    
+    def _update(**kwargs):
+        from .client import workTimeAccountingService
+        workTimeAccountingService.update(**kwargs)
+    
+    def _copy(**kwargs):
+        from .client import workTimeAccountingService
+        workTimeAccountingService.copy(**kwargs)
+    
+    def _login(**kwargs):
+        from .client import baseService
+        baseService.login(**kwargs)
+    
+    def _logout(**kwargs):
+        from .client import baseService
+        baseService.logout(**kwargs)
+
+
+    from .common import arguments
     try:
         parsed_args = arguments.parse()
 
         {
-            'login': baseService.login,
+            'login': _login,
             'projects': projects,
             'tasks': tasks,
-            'list': list,
+            'list': _list,
             'comp_billable': comp_billable,
             'comp_list': comp_list,
-            'add': workTimeAccountingService.add,
+            'add': _add,
             'api': api,
             'sync': sync,
             'activities': activities,
             'completion': completion,
-            'del': workTimeAccountingService.delete,
-            'update': workTimeAccountingService.update,
-            'logout': baseService.logout,
-            'copy': workTimeAccountingService.copy
+            'del': _del,
+            'update': _update,
+            'logout': _logout,
+            'copy': _copy
         }[sys.argv[1]](**parsed_args)
-    except WebFault as e:
-        try:
-            sys.stderr.write(str(e) + '\n')
-        except:
-            # suds unicode bug
-            print 'SESSION_INVALID'
+#    except WebFault as e:
+#        try:
+#            sys.stderr.write(str(e) + '\n')
+#        except:
+#            # suds unicode bug
+#            print 'SESSION_INVALID'
     except BaseException as e:
         sys.stderr.write(str(e) + '\n')
