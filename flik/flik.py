@@ -147,6 +147,10 @@ def main():
         from .client import workTimeAccountingService
         workTimeAccountingService.copy(**kwargs)
     
+    def _move(**kwargs):
+        from .client import workTimeAccountingService
+        workTimeAccountingService.move(**kwargs)
+    
     def _login(**kwargs):
         from .client import baseService
         baseService.login(**kwargs)
@@ -175,7 +179,8 @@ def main():
             'del': _del,
             'update': _update,
             'logout': _logout,
-            'copy': _copy
+            'copy': _copy,
+            'move': _move
         }[sys.argv[1]](**parsed_args)
 #    except WebFault as e:
 #        try:

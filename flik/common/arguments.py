@@ -10,6 +10,7 @@ def parse():
     add_add_parser(subparsers)
     add_api_parser(subparsers)
     add_copy_parser(subparsers)
+    add_move_parser(subparsers)
     add_del_parser(subparsers)
     add_comp_billable_parser(subparsers)
     add_comp_list_parser(subparsers)
@@ -53,6 +54,11 @@ def add_copy_parser(subparsers):
     parser.add_argument('to_date', type=dateparam.parse)
     parser.add_argument('duration', type=float)
 
+def add_move_parser(subparsers):
+    parser = subparsers.add_parser('move', help='move worktime')
+    parser.add_argument('from_date', type=dateparam.parse)
+    parser.add_argument('workTimeID')
+    parser.add_argument('to_date', type=dateparam.parse)
 
 def add_del_parser(subparsers):
     parser = subparsers.add_parser('del', help='delete Worktime')

@@ -105,6 +105,20 @@ def update(date, workTimeID, duration):
         workTimeID=workTimeID,
         duration=float(duration) * 60 * 60)
 
+@autologin
+def move(from_date, workTimeID, to_date):
+    current = client().service.getWorktime(sessionID(), workTimeID)[0]
+    client().service.editWorktime(
+        sessionID(),
+        date=dateparam.format(to_date[0]),
+        projectID=current['projectID'],
+        comment=current['comment'],
+        activityID=current['activityID'],
+        taskID=current['taskID'],
+        billable=current['billable'],
+        workTimeID=workTimeID,
+        duration=float(current['duration']) / 1000)
+
 
 def activities():
     return safe_load(storage.readShare('activities.yaml'))

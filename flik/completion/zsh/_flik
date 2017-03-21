@@ -29,6 +29,7 @@ command_opts="\
   activities\\:'list cached activities'\
   sync\\:'update caches'\
   copy\\:'copy Worktime'\
+  move\\:'move Worktime'\
   api\\:'print api'"
 
 _flik() { 
@@ -92,6 +93,24 @@ _flik() {
                 ;;
               time)
                 _arguments "5:Time:($time_opts)"
+            esac
+        ;;
+        move)
+            _arguments \
+              '2: :->from_date'\
+              '3: :->entry'\
+              '4: :->to_date'\
+
+            case $state in
+              from_date)
+                _arguments "2:FromDate:($date_opts $(date +%Y-w%V))"
+                ;;
+              entry)
+                _arguments "3:Entry:(($(flik comp_list $words[3])))"
+                ;;
+              to_date)
+                _arguments "4:ToDate:($date_opts)"
+                ;;
             esac
         ;;
         del)
