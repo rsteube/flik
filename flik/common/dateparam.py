@@ -28,6 +28,11 @@ def parse(raw_date):
     toDate = date + relativedelta(days=1)
     return date, toDate
 
+def fix(date):
+    """ temporary daylight saving time fix  """
+    # TODO fix this correctly (only works for summer)
+    return date[0] + relativedelta(days=-1), date[1] + relativedelta(days=-1)
+
 
 def format(date):
     return date.strftime('%Y-%m-%d')
