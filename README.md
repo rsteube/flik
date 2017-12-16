@@ -45,6 +45,9 @@ sed -i '1ifpath+=($(flik completion))\' ~/.zshrc
 - `flik login` (config stored in `~/.config/flik/config.yml` and password using the available [keyring](https://github.com/jaraco/keyring/))
 - `flik sync` (updates cache in `~/.local/share/flik`)
 
+## Limiting/blacklisting completion options
+In case that you have more _projects_, _tasks_ or _activities_ assigned than you need for time tracking you can simply remove the corresponding entries from the cache files in `~/.local/share/flik`. Note that you have to redo this step after updating the cache using `flik sync`.
+
 ## Demo
 
 ```sh
