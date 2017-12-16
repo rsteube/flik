@@ -23,7 +23,7 @@ Or extend `fpath` manually:
 #~/.zshrc
 #
 #zstyle ':completion:*' menu select
-fpath=+($(flik completion))
+fpath+=($(flik completion))
 autoload -U compinit && compinit
 ```
 
