@@ -1,1 +1,1 @@
-$fpath+=($(flik completion))
+fpath+=($(flik completion))
