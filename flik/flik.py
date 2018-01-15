@@ -91,7 +91,7 @@ def _list(date, dump=True):
     return __list(date, dump)
 
 def comp_billable(project):
-    if projects(dump=False)[project]['billable']:
+    if projects(dump=False)[project.decode('utf-8')]['billable']:
         print 'billable'
     print 'non_billable'
 
