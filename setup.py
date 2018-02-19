@@ -12,7 +12,7 @@ setup(
     entry_points={'console_scripts': ['flik = flik.flik:main']},
     install_requires=[
         'python-dateutil',
-        'suds',
+        'zeep',
         'pyyaml',
         'keyring',
         'keyrings.alt'

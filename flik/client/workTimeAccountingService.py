@@ -1,4 +1,4 @@
-from suds.client import Client
+from zeep import CachingClient as Client
 from yaml import safe_dump, safe_load
 from ..common import config, storage, dateparam
 from ..common.util import quote, sessionID
@@ -28,7 +28,7 @@ def syncProjects():
 @autologin
 def syncTasks():
     tasks = {}
-    for projectName, x in projects().iteritems():
+    for projectName, x in list(projects().items()):
         tasks[projectName] = {}
         for task in client().service.getTasks(sessionID(), x['id']):
             tasks[projectName].update(extractTasks(task))

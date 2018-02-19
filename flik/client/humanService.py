@@ -1,4 +1,4 @@
-from suds.client import Client
+from zeep import CachingClient as Client
 from ..common import config
 
 

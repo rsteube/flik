@@ -1,4 +1,4 @@
-from suds.client import Client
+from zeep import CachingClient as Client
 from yaml import safe_dump
 from ..common import config, storage
 from ..common.util import quote, sessionID
@@ -14,7 +14,7 @@ def syncActivities():
     raw_activities = client().service.getActivities(sessionID())
 
     activities = {}
-    for activity in filter(lambda x: x.active, raw_activities):
+    for activity in [x for x in raw_activities if x.active]:
         activities[quote(activity.name)] = str(activity.activityID)
     storage.writeShare(
         'activities.yaml', safe_dump(
