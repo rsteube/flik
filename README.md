@@ -4,7 +4,7 @@
 
 **flik** is a command line client for [Proventis Blue Ant](https://www.proventis.net/de/). It provides basic time tracking functionalities using dynamic [zsh command completion](https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org).
 
-![demo](demo.gif)
+![demo](demo.svg)
 
 ## Install
 
