@@ -43,20 +43,18 @@ def extractTasks(task, prefix=''):
         result[quote(prefix + task.name)] = str(task.taskID)
 
     if task.children is not None:
-        for x, child in task.children:
-            if child is not None:
-                for x in child:
-                    result.update(extractTasks(x, task.name + '__'))
+        for subTask in task.children.WorkTimeTask:
+            result.update(extractTasks(subTask, task.name + '__'))
     return result
 
 
 @autologin
 def add(date, project, task, activity, billable, duration, comment):
-    projectID = projects()[project.decode('utf-8')]['id']
-    taskID = tasks()[project.decode('utf-8')][task.decode('utf-8')]
+    projectID = projects()[project]['id']
+    taskID = tasks()[project][task]
     activityID = activities()[activity]
 
-    comment = ' '.join(comment).decode('utf-8')
+    comment = ' '.join(comment)
 
     client().service.editWorktime(
         sessionID=sessionID(),

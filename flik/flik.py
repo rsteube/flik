@@ -26,7 +26,7 @@ def projects(dump=True):
 
     projects = safe_load(storage.readShare('projects.yaml'))
     if dump:
-        print(('\n'.join(list(projects.keys())).encode('utf-8')))
+        print('\n'.join(list(projects.keys())))
     return projects
 
 
@@ -37,8 +37,8 @@ def tasks(project=None, dump=True):
     tasks = safe_load(storage.readShare('tasks.yaml'))
     if dump:
         #TODO use project index
-        print(('\n'.join(list(tasks[project.decode('utf-8')].keys())).encode('utf-8')))
-    return tasks[project.decode('utf-8')]
+        print(('\n'.join(list(tasks[project].keys()))))
+    return tasks[project]
 
 def _list(date, dump=True):
     from flik.client import workTimeAccountingService
@@ -93,14 +93,14 @@ def _list(date, dump=True):
     return __list(date, dump)
 
 def comp_billable(project):
-    if projects(dump=False)[project.decode('utf-8')]['billable']:
+    if projects(dump=False)[project]['billable']:
         print('billable')
     print('non_billable')
 
 def comp_list(date):
     entries = _list(date, dump=False)
     for id, entry in list(entries.items()):
-        print(("{}\:'{:1.160}'".format(id, entry.encode('utf-8'))))
+        print(("{}\:'{:1.160}'".format(id, entry)))
     if len(entries) == 1:
         print("none")
 

@@ -11,7 +11,9 @@ def client():
 
 @autologin
 def syncActivities():
-    raw_activities = client().service.getActivities(sessionID())
+    raw_activities = client().service.getActivities(
+            sessionID=sessionID(),
+            defaultvalue=False)
 
     activities = {}
     for activity in [x for x in raw_activities if x.active]:
