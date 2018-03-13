@@ -108,13 +108,13 @@ def comp_list(date):
 def api(service):
     from flik.client import baseService, masterDataService, workTimeAccountingService, humanService, projectsService
 
-    print(({
+    print({
         'baseService': baseService.client,
         'workTimeAccountingService': workTimeAccountingService.client,
         'masterDataService': masterDataService.client,
         'humanService': humanService.client,
         'projectsService': projectsService.client
-    }[service]()))
+    }[service]().wsdl.dump())
 
 
 def sync():
