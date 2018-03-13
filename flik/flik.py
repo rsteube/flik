@@ -76,18 +76,18 @@ def _list(date, dump=True):
             dayTime[workTime.date] += time
     
             entries_by_date[workTime.date][workTimeID] = entries[
-                workTimeID] = "{:.2f} {}{}  {:25.25}  {:25.25}  {:80.80}".format(
+                workTimeID] = "{:.2f} {}{}  {:25.25}  {:25.25}  {:.80}".format(
                     time, billable, state, project, task, comment)
         if dump:
             for date, entries_for_date in sorted(entries_by_date.items()):
-                print(('[%s]' % date.strftime('%Y-%m-%d %a')))
-                print(('\n'.join(list(entries_for_date.values()))))
+                print('[%s]' % date.strftime('%Y-%m-%d %a'))
+                print('\n'.join(entries_for_date.values()))
                 print('-----')
-                print((dayTime[date]))
+                print(dayTime[date])
                 print('')
             if len(list(dayTime.values())) > 1:
                 print('=====')
-                print((sum(dayTime.values())))
+                print(sum(dayTime.values()))
         return entries
 
     return __list(date, dump)
