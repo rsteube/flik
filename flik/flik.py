@@ -183,6 +183,9 @@ def main():
             'copy': _copy,
             'move': _move
         }[sys.argv[1]](**parsed_args)
-    except BaseException as e:
-        logging.exception(str(e))
+    except Exception as e:
+        if hasattr(e, 'message'):
+            loggint.error(e.message)
+        else:
+            logging.error(str(e))
 
