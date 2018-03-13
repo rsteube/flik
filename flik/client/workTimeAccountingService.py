@@ -55,17 +55,17 @@ def add(date, project, task, activity, billable, duration, comment):
     activityID = activities()[activity]
 
     comment = ' '.join(comment)
-
-    client().service.editWorktime(
-        sessionID=sessionID(),
-        date=dateparam.format(date[0]),
-        projectID=projectID,
-        taskID=taskID,
-        activityID=activityID,
-        duration=(float(duration) * 60 * 60),
-        billable=billable,
-        comment=comment,
-        workTimeID=None)
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(date[0]),
+            projectID=projectID,
+            taskID=taskID,
+            activityID=activityID,
+            duration=(float(duration) * 60 * 60),
+            billable=billable,
+            comment=comment,
+            workTimeID=None)
 
 
 @autologin
@@ -92,16 +92,17 @@ def delete(workTimeID, date):
 @autologin
 def update(date, workTimeID, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
-    client().service.editWorktime(
-        sessionID(),
-        date=current['date'],
-        projectID=current['projectID'],
-        comment=current['comment'],
-        activityID=current['activityID'],
-        taskID=current['taskID'],
-        billable=current['billable'],
-        workTimeID=workTimeID,
-        duration=float(duration) * 60 * 60)
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID(),
+            date=current['date'],
+            projectID=current['projectID'],
+            comment=current['comment'],
+            activityID=current['activityID'],
+            taskID=current['taskID'],
+            billable=current['billable'],
+            workTimeID=workTimeID,
+            duration=float(duration) * 60 * 60)
 
 @autologin
 def move(from_date, workTimeID, to_date):
