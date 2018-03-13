@@ -57,7 +57,6 @@ def _list(date, dump=True):
         entries_by_date = {}
         dayTime = {}
         for workTime in workTimes:
-            #print time.date
             project = workTime.projectName
             task = workTime.taskName
             workTimeID = workTime.workTimeID
@@ -184,12 +183,6 @@ def main():
             'copy': _copy,
             'move': _move
         }[sys.argv[1]](**parsed_args)
-#    except WebFault as e:
-#        try:
-#            sys.stderr.write(str(e) + '\n')
-#        except:
-#            # suds unicode bug
-#            print 'SESSION_INVALID'
     except BaseException as e:
         logging.exception(str(e))
-        
+

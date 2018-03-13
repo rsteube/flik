@@ -2,7 +2,6 @@ import getpass, keyring
 from functools import wraps
 from zeep import CachingClient as Client
 from zeep.exceptions import Fault
-#from suds import WebFault
 from ..common import config, storage
 from ..common.util import sessionID
 
