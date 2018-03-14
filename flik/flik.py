@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os, sys
 import logging
 
@@ -131,6 +130,9 @@ def main():
     if len(sys.argv) == 2 and sys.argv[1] == 'completion':
         print((completion()))
         exit(0)
+    
+    if len(sys.argv) == 1:
+        sys.argv.append('list')
 
     def _add(**kwargs):
         from flik.client import workTimeAccountingService
