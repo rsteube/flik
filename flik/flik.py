@@ -187,7 +187,7 @@ def main():
         }[sys.argv[1]](**parsed_args)
     except Exception as e:
         if hasattr(e, 'message'):
-            loggint.error(e.message)
+            logging.error(e.message)
         else:
             logging.error(str(e))
 
