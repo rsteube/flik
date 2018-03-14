@@ -15,7 +15,7 @@ def activities(dump=True):
 
     activities = safe_load(storage.readShare('activities.yaml'))
     if dump:
-        print(('\n'.join(list(activities.keys()))))
+        print('\n'.join(list(activities.keys())))
     return activities
 
 
@@ -36,7 +36,7 @@ def tasks(project=None, dump=True):
     tasks = safe_load(storage.readShare('tasks.yaml'))
     if dump:
         #TODO use project index
-        print(('\n'.join(list(tasks[project].keys()))))
+        print('\n'.join(list(tasks[project].keys())))
     return tasks[project]
 
 def _list(date, dump=True):
@@ -98,7 +98,7 @@ def comp_billable(project):
 def comp_list(date):
     entries = _list(date, dump=False)
     for id, entry in list(entries.items()):
-        print(("{}\:'{:1.160}'".format(id, entry)))
+        print("{}\:'{:1.160}'".format(id, entry))
     if len(entries) == 1:
         print("none")
 
@@ -128,7 +128,7 @@ def completion():
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == 'completion':
-        print((completion()))
+        print(completion())
         exit(0)
     
     if len(sys.argv) == 1:
