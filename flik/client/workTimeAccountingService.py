@@ -72,16 +72,17 @@ def add(date, project, task, activity, billable, duration, comment):
 def copy(from_date, workTimeID, to_date, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
 
-    client().service.editWorktime(
-        sessionID=sessionID(),
-        date=dateparam.format(to_date[0]),
-        projectID=current['projectID'],
-        taskID=current['taskID'],
-        activityID=current['activityID'],
-        duration=(float(duration) * 60 * 60),
-        billable=current['billable'],
-        comment=current['comment'],
-        workTimeID=None)
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(to_date[0]),
+            projectID=current['projectID'],
+            taskID=current['taskID'],
+            activityID=current['activityID'],
+            duration=(float(duration) * 60 * 60),
+            billable=current['billable'],
+            comment=current['comment'],
+            workTimeID=None)
 
 
 @autologin
@@ -107,16 +108,18 @@ def update(date, workTimeID, duration):
 @autologin
 def move(from_date, workTimeID, to_date):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
-    client().service.editWorktime(
-        sessionID(),
-        date=dateparam.format(to_date[0]),
-        projectID=current['projectID'],
-        comment=current['comment'],
-        activityID=current['activityID'],
-        taskID=current['taskID'],
-        billable=current['billable'],
-        workTimeID=workTimeID,
-        duration=float(current['duration']) / 1000)
+    
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID(),
+            date=dateparam.format(to_date[0]),
+            projectID=current['projectID'],
+            comment=current['comment'],
+            activityID=current['activityID'],
+            taskID=current['taskID'],
+            billable=current['billable'],
+            workTimeID=workTimeID,
+            duration=float(current['duration']) / 1000)
 
 
 def activities():
