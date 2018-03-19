@@ -1,4 +1,4 @@
-from suds.client import Client
+from zeep import CachingClient as Client
 from yaml import safe_dump, safe_load
 from ..common import config, storage, dateparam
 from ..common.util import quote, sessionID
@@ -28,7 +28,7 @@ def syncProjects():
 @autologin
 def syncTasks():
     tasks = {}
-    for projectName, x in projects().iteritems():
+    for projectName, x in list(projects().items()):
         tasks[projectName] = {}
         for task in client().service.getTasks(sessionID(), x['id']):
             tasks[projectName].update(extractTasks(task))
@@ -43,47 +43,46 @@ def extractTasks(task, prefix=''):
         result[quote(prefix + task.name)] = str(task.taskID)
 
     if task.children is not None:
-        for x, child in task.children:
-            if child is not None:
-                for x in child:
-                    result.update(extractTasks(x, task.name + '__'))
+        for subTask in task.children.WorkTimeTask:
+            result.update(extractTasks(subTask, task.name + '__'))
     return result
 
 
 @autologin
 def add(date, project, task, activity, billable, duration, comment):
-    projectID = projects()[project.decode('utf-8')]['id']
-    taskID = tasks()[project.decode('utf-8')][task.decode('utf-8')]
+    projectID = projects()[project]['id']
+    taskID = tasks()[project][task]
     activityID = activities()[activity]
 
-    comment = ' '.join(comment).decode('utf-8')
-
-    client().service.editWorktime(
-        sessionID=sessionID(),
-        date=dateparam.format(date[0]),
-        projectID=projectID,
-        taskID=taskID,
-        activityID=activityID,
-        duration=(float(duration) * 60 * 60),
-        billable=billable,
-        comment=comment,
-        workTimeID=None)
+    comment = ' '.join(comment)
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(date[0]),
+            projectID=projectID,
+            taskID=taskID,
+            activityID=activityID,
+            duration=(float(duration) * 60 * 60),
+            billable=billable,
+            comment=comment,
+            workTimeID=None)
 
 
 @autologin
 def copy(from_date, workTimeID, to_date, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
 
-    client().service.editWorktime(
-        sessionID=sessionID(),
-        date=dateparam.format(to_date[0]),
-        projectID=current['projectID'],
-        taskID=current['taskID'],
-        activityID=current['activityID'],
-        duration=(float(duration) * 60 * 60),
-        billable=current['billable'],
-        comment=current['comment'],
-        workTimeID=None)
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID=sessionID(),
+            date=dateparam.format(to_date[0]),
+            projectID=current['projectID'],
+            taskID=current['taskID'],
+            activityID=current['activityID'],
+            duration=(float(duration) * 60 * 60),
+            billable=current['billable'],
+            comment=current['comment'],
+            workTimeID=None)
 
 
 @autologin
@@ -94,30 +93,33 @@ def delete(workTimeID, date):
 @autologin
 def update(date, workTimeID, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
-    client().service.editWorktime(
-        sessionID(),
-        date=current['date'],
-        projectID=current['projectID'],
-        comment=current['comment'],
-        activityID=current['activityID'],
-        taskID=current['taskID'],
-        billable=current['billable'],
-        workTimeID=workTimeID,
-        duration=float(duration) * 60 * 60)
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID(),
+            date=current['date'],
+            projectID=current['projectID'],
+            comment=current['comment'],
+            activityID=current['activityID'],
+            taskID=current['taskID'],
+            billable=current['billable'],
+            workTimeID=workTimeID,
+            duration=float(duration) * 60 * 60)
 
 @autologin
 def move(from_date, workTimeID, to_date):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
-    client().service.editWorktime(
-        sessionID(),
-        date=dateparam.format(to_date[0]),
-        projectID=current['projectID'],
-        comment=current['comment'],
-        activityID=current['activityID'],
-        taskID=current['taskID'],
-        billable=current['billable'],
-        workTimeID=workTimeID,
-        duration=float(current['duration']) / 1000)
+    
+    with client().options(raw_response=True):
+        client().service.editWorktime(
+            sessionID(),
+            date=dateparam.format(to_date[0]),
+            projectID=current['projectID'],
+            comment=current['comment'],
+            activityID=current['activityID'],
+            taskID=current['taskID'],
+            billable=current['billable'],
+            workTimeID=workTimeID,
+            duration=float(current['duration']) / 1000)
 
 
 def activities():

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from setuptools import setup, find_packages
 import fastentrypoints
 
@@ -12,7 +12,7 @@ setup(
     entry_points={'console_scripts': ['flik = flik.flik:main']},
     install_requires=[
         'python-dateutil',
-        'suds',
+        'zeep',
         'pyyaml',
         'keyring',
         'keyrings.alt'

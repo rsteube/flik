@@ -25,7 +25,7 @@ def get_args(cls, dist, header=None):
     spec = str(dist.as_requirement())
     for type_ in 'console', 'gui':
         group = type_ + '_scripts'
-        for name, ep in dist.get_entry_map(group).items():
+        for name, ep in list(dist.get_entry_map(group).items()):
             cls._ensure_safe_name(name)
             script_text = template.format(
                           ep.module_name, ep.attrs[0])

@@ -10,7 +10,7 @@
 
 Install using [pip](https://pip.pypa.io/en/stable/):
 ```sh
-sudo pip2 install git+https://github.com/rsteube/flik
+pip install git+https://github.com/rsteube/flik
 ```
 
 Add completion plugin using [zgen](https://github.com/tarjoilija/zgen) or similar:
@@ -35,7 +35,7 @@ autoload -U compinit && compinit
 
 ```bash
 curl -sSL https://bootstrap.pypa.io/get-pip.py | python
-pip2 install git+https://github.com/rsteube/flik
+pip install git+https://github.com/rsteube/flik
 sed -i '1ifpath+=($(flik completion))\' ~/.zshrc
 ```
 - restart [Babun]

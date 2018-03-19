@@ -1,8 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import sys
-
-import flik.flik
-
+from flik import flik
 if __name__ == '__main__':
-    sys.exit(flik.flik.main())
+    sys.exit(flik.main())

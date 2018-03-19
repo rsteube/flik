@@ -9,8 +9,8 @@ def load():
 def reconfigure():
     config = {
         'url': 'https://{}/blueant/services/'.format(
-            raw_input('URL (https://${URL}/blueant/services): ')),
-        'username': raw_input('Username: ')
+            eval(input('URL (https://${URL}/blueant/services): '))),
+        'username': eval(input('Username: '))
     }
     storage.writeConfig(
         'config.yaml', safe_dump(

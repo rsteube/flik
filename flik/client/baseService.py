@@ -1,7 +1,7 @@
 import getpass, keyring
 from functools import wraps
-from suds.client import Client, Method
-from suds import WebFault
+from zeep import CachingClient as Client
+from zeep.exceptions import Fault
 from ..common import config, storage
 from ..common.util import sessionID
 
@@ -32,10 +32,9 @@ def autologin(func):
     def __wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except WebFault as e:
-            message = e.args[0].encode('utf-8')
-            if message == "Server raised fault: 'Ihre Sitzung ist ung\xc3\xbcltig!'":
-		login()
+        except Fault as e:
+            if e.message == 'Ihre Sitzung ist ungültig!':
+                login()
                 return func(*args, **kwargs)
             else:
                 raise e
