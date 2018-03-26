@@ -34,7 +34,7 @@ def is_dst(date):
 
 def fix(date):
     """ temporary daylight saving time fix  """
-    return (date[0] + relativedelta(days=-1), date[1] + relativedelta(days=-1)) if is_dst(date[0]) else date
+    return date[0] + relativedelta(days=-1) if is_dst(date[0]) else date[0], date[1] + relativedelta(days=-1) if is_dst(date[1]) else date[1]
 
 def format(date):
     return date.strftime('%Y-%m-%d')
