@@ -1,5 +1,5 @@
+import pendulum
 import re
-import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
 
@@ -29,12 +29,12 @@ def parse(raw_date):
     toDate = date + relativedelta(days=1)
     return date, toDate
 
-def is_dst( ):
-    return bool(time.localtime( ).tm_isdst)
+def is_dst(date):
+    return pendulum.create(date.year, date.month, date.day, tz='Europe/Berlin').is_dst
 
 def fix(date):
     """ temporary daylight saving time fix  """
-    return (date[0] + relativedelta(days=-1), date[1] + relativedelta(days=-1)) if is_dst() else date
+    return (date[0] + relativedelta(days=-1), date[1] + relativedelta(days=-1)) if is_dst(date[0]) else date
 
 def format(date):
     return date.strftime('%Y-%m-%d')

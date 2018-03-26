@@ -15,6 +15,7 @@ setup(
         'zeep',
         'pyyaml',
         'keyring',
-        'keyrings.alt'
+        'keyrings.alt',
+        'pendulum'
     ],
     zip_safe=False)
