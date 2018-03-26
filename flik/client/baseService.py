@@ -32,6 +32,10 @@ def autologin(func):
     def __wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
+        except AssertionError as e:
+            # temporary workaround until zeep raw_response is not necessary anymore
+            login()
+            return func(*args, **kwargs)
         except Fault as e:
             if e.message == 'Ihre Sitzung ist ungültig!':
                 login()

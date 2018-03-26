@@ -56,7 +56,7 @@ def add(date, project, task, activity, billable, duration, comment):
 
     comment = ' '.join(comment)
     with client().options(raw_response=True):
-        client().service.editWorktime(
+        response = client().service.editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(date[0]),
             projectID=projectID,
@@ -66,7 +66,7 @@ def add(date, project, task, activity, billable, duration, comment):
             billable=billable,
             comment=comment,
             workTimeID=None)
-
+        assert response.status_code == 200, 'raw_response is not 200'
 
 @autologin
 def copy(from_date, workTimeID, to_date, duration):
