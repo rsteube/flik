@@ -4,7 +4,6 @@ python:
   - 'pypy3.5'
 
 install:
-  #- pip install --upgrade setuptools
   - pip install .
 
 script:
@@ -15,7 +14,7 @@ before_deploy:
 
 deploy:
   provider: pypi
-  user: $PYPI_USER
-  password: $PYPI_PASS
+  user: ${PYPI_USER}
+  password: ${PYPI_PASS}
   on:
     tags: true
