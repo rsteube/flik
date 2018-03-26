@@ -4,8 +4,8 @@ import fastentrypoints
 
 setup(
     name='flik',
-    version='0.10',
-    description='blue ant cli client',
+    version='1.0',
+    description='blueant cli client',
     license='MIT',
     packages=find_packages(),
     include_package_data=True,

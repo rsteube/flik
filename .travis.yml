@@ -1,9 +1,21 @@
 language: python
 python:
-  - '2.7'
-  - pypy
+  - '3.6'
+  - 'pypy3.5'
+
 install:
-  - pip2 install --upgrade setuptools
-  - pip2 install .
+  #- pip install --upgrade setuptools
+  - pip install .
+
 script:
   - flik completion
+
+before_deploy:
+  - sed -i "s_version=.*,_version='${TRAVIS_TAG}'_" setup.py
+
+deploy:
+  provider: pypi
+  user: $PYPI_USER
+  password: $PYPI_PASS
+  on:
+    tags: true
