@@ -46,6 +46,7 @@ def _list(date, dump=True):
     
     @autologin
     def __list(date, dump=True):
+        date=dateparam.fix(date)
         workTimes = workTimeAccountingService.client().service.getPersonalWorktime(
             sessionID(),
             fromDate=dateparam.format(date[0]),
