@@ -55,7 +55,7 @@ def add(date, project, task, activity, billable, duration, comment):
     activityID = activities()[activity]
 
     comment = ' '.join(comment)
-    with client().options(raw_response=True):
+    with client().settings(raw_response=True):
         response = client().service.editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(date[0]),
@@ -72,7 +72,7 @@ def add(date, project, task, activity, billable, duration, comment):
 def copy(from_date, workTimeID, to_date, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
 
-    with client().options(raw_response=True):
+    with client().settings(raw_response=True):
         client().service.editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(to_date[0]),
@@ -93,7 +93,7 @@ def delete(workTimeID, date):
 @autologin
 def update(date, workTimeID, duration):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
-    with client().options(raw_response=True):
+    with client().settings(raw_response=True):
         client().service.editWorktime(
             sessionID(),
             date=current['date'],
@@ -109,7 +109,7 @@ def update(date, workTimeID, duration):
 def move(from_date, workTimeID, to_date):
     current = client().service.getWorktime(sessionID(), workTimeID)[0]
     
-    with client().options(raw_response=True):
+    with client().settings(raw_response=True):
         client().service.editWorktime(
             sessionID(),
             date=dateparam.format(to_date[0]),

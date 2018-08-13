@@ -30,7 +30,7 @@ def parse(raw_date):
     return date, toDate
 
 def is_dst(date):
-    return pendulum.create(date.year, date.month, date.day, tz='Europe/Berlin').is_dst
+    return pendulum.datetime(date.year, date.month, date.day, tz='Europe/Berlin').is_dst
 
 def fix(date):
     """ temporary daylight saving time fix  """
