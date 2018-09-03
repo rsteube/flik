@@ -15,7 +15,9 @@ setup(
         'zeep >= 3.1.0',
         'pyyaml >= 3.13',
         'keyring >= 13.2.1',
-        'keyrings.alt >= 3.1',
         'pendulum >= 2.0.3'
     ],
+    extras_requires={
+        'keyrings.alt': ['keyrings.alt >= 3.1']
+    },
     zip_safe=False)
