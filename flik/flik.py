@@ -1,7 +1,7 @@
 import os, sys
 import logging
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def sessionID():
