@@ -6,12 +6,12 @@ from .baseService import autologin
 
 
 def client():
-    return Client(config.load()['url'] + 'MasterDataService.wsdl')
+    return Client(config.load()['url'] + 'MasterDataService.wsdl').create_service('{http://blueant.axis.proventis.net/}MasterDataBinding', address='https://demosystem.blueant.cloud/services/MasterDataService')
 
 
 @autologin
 def syncActivities():
-    raw_activities = client().service.getActivities(
+    raw_activities = client().getActivities(
             sessionID=sessionID(),
             defaultvalue=False)
 

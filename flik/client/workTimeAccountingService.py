@@ -9,13 +9,14 @@ def client():
     global service
     if not 'service' in globals():
         service =  Client(config.load()['url'] + 'WorktimeAccountingService.wsdl')
+        service = client().create_service('{http://blueant.axis.proventis.net/}WorktimeAccountingBinding', address='https://demosystem.blueant.cloud/services/WorktimeAccountingService')
     return service
 
 
 @autologin
 def syncProjects():
     projects = {}
-    for project in client().service.getProjects(sessionID()):
+    for project in client().getProjects(sessionID()):
         projects[quote(project.name)] = {
                 'id': str(project.projectID),
                 'billable': project.billable}
@@ -30,7 +31,7 @@ def syncTasks():
     tasks = {}
     for projectName, x in list(projects().items()):
         tasks[projectName] = {}
-        for task in client().service.getTasks(sessionID(), x['id']):
+        for task in client().getTasks(sessionID(), x['id']):
             tasks[projectName].update(extractTasks(task))
 
     storage.writeShare(
@@ -55,8 +56,8 @@ def add(date, project, task, activity, billable, duration, comment):
     activityID = activities()[activity]
 
     comment = ' '.join(comment)
-    with client().settings(raw_response=True):
-        response = client().service.editWorktime(
+    with client()._client.settings(raw_response=True):
+        response = client().editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(date[0]),
             projectID=projectID,
@@ -70,10 +71,10 @@ def add(date, project, task, activity, billable, duration, comment):
 
 @autologin
 def copy(from_date, workTimeID, to_date, duration):
-    current = client().service.getWorktime(sessionID(), workTimeID)[0]
+    current = client().getWorktime(sessionID(), workTimeID)[0]
 
-    with client().settings(raw_response=True):
-        client().service.editWorktime(
+    with client()._client.settings(raw_response=True):
+        client().editWorktime(
             sessionID=sessionID(),
             date=dateparam.format(to_date[0]),
             projectID=current['projectID'],
@@ -87,14 +88,14 @@ def copy(from_date, workTimeID, to_date, duration):
 
 @autologin
 def delete(workTimeID, date):
-    client().service.deleteWorktime(sessionID(), workTimeID)
+    client().deleteWorktime(sessionID(), workTimeID)
 
 
 @autologin
 def update(date, workTimeID, duration):
-    current = client().service.getWorktime(sessionID(), workTimeID)[0]
-    with client().settings(raw_response=True):
-        client().service.editWorktime(
+    current = client().getWorktime(sessionID(), workTimeID)[0]
+    with client()._client.settings(raw_response=True):
+        client().editWorktime(
             sessionID(),
             date=current['date'],
             projectID=current['projectID'],
@@ -107,10 +108,10 @@ def update(date, workTimeID, duration):
 
 @autologin
 def move(from_date, workTimeID, to_date):
-    current = client().service.getWorktime(sessionID(), workTimeID)[0]
+    current = client().getWorktime(sessionID(), workTimeID)[0]
     
     with client().settings(raw_response=True):
-        client().service.editWorktime(
+        client().editWorktime(
             sessionID(),
             date=dateparam.format(to_date[0]),
             projectID=current['projectID'],
