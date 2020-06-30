@@ -8,7 +8,7 @@ def load():
 
 def reconfigure():
     config = {
-        'url': 'https://{}/blueant/services/'.format(input('URL (https://${URL}/blueant/services): ')),
+        'url': 'https://{}/'.format(input('URL (https://${URL}/psap): ')),
         'username': input('Username: ')
     }
     storage.writeConfig(

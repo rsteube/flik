@@ -6,7 +6,7 @@ from .baseService import autologin
 
 
 def client():
-    return Client(config.load()['url'] + 'MasterDataService?wsdl')
+    return Client(config.load()['url'] + 'MasterDataService.wsdl')
 
 
 @autologin

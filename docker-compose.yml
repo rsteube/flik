@@ -6,3 +6,5 @@ services:
     image: rsteube/flik:dev
     container_name: flik
     hostname: flik
+    volumes:
+      - '.:/src'

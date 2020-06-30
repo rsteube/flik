@@ -8,7 +8,7 @@ from .baseService import autologin
 def client():
     global service
     if not 'service' in globals():
-        service =  Client(config.load()['url'] + 'WorktimeAccountingService?wsdl')
+        service =  Client(config.load()['url'] + 'WorktimeAccountingService.wsdl')
     return service
 
 
