@@ -56,10 +56,10 @@ def _list(date, dump=True):
         entries_by_date = {}
         dayTime = {}
         for workTime in workTimes:
-            project = workTime.projectName
-            task = workTime.taskName
+            project = workTime.projectName if workTime.projectName else ' '
+            task = workTime.taskName if workTime.taskName else ' '
             workTimeID = workTime.workTimeID
-            comment = workTime.comment
+            comment = workTime.comment if workTime.comment else ' '
             billable = '$' if workTime.billable else ' '
             time = (float(workTime.duration) / (1000 * 60 * 60)) % 24
             state = {
@@ -67,7 +67,6 @@ def _list(date, dump=True):
                 1: 'L',  # locked
                 2: 'X',  # rejected?
             }[workTime.state]
-    
             if not workTime.date in list(entries_by_date.keys()):
                 entries_by_date[workTime.date] = {}
                 dayTime[workTime.date] = 0
