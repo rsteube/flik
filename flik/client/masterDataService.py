@@ -1,12 +1,13 @@
 from zeep import CachingClient as Client
 from yaml import safe_dump
-from ..common import config, storage
+from ..common import config, storage, util
 from ..common.util import quote, sessionID
 from .baseService import autologin
 
 
 def client():
-    return Client(config.load()['url'] + 'MasterDataService.wsdl').create_service('{http://blueant.axis.proventis.net/}MasterDataBinding', address='https://demosystem.blueant.cloud/services/MasterDataService')
+    transport = util.create_https_transport() 
+    return Client(config.load()['url'] + '/MasterDataService.wsdl', transport=transport).create_service('{http://blueant.axis.proventis.net/}MasterDataBinding', address=config.load()['url']+'/services/MasterDataService')
 
 
 @autologin

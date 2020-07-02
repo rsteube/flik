@@ -2,22 +2,21 @@ import getpass, keyring
 from functools import wraps
 from zeep import CachingClient as Client
 from zeep.exceptions import Fault
-from ..common import config, storage
+from ..common import config, storage, util
 from ..common.util import sessionID
 from zeep.transports import Transport
 
 
 def client():
-    transport = Transport()
-    transport.session.verify = False
-    return Client(config.load()['url'] + 'BaseService.wsdl', transport=transport)
+    transport = util.create_https_transport()
+    return Client(config.load()['url'] + '/BaseService.wsdl', transport=transport)
 
 
 def login():
     username = (config.load() or config.reconfigure())['username']
     password = keyring.get_password('flik', username) or getpass.getpass()
 
-    session = client().create_service('{http://blueant.axis.proventis.net/}BaseBinding', address='https://demosystem.blueant.cloud/services/BaseService').Login(username, password)
+    session = client().create_service('{http://blueant.axis.proventis.net/}BaseBinding', address=config.load()['url']+'/services/BaseService').Login(username, password)
     storage.writeShare('sessionID', session.sessionID)
     keyring.set_password('flik', username, password)
 

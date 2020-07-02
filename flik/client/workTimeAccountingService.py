@@ -1,6 +1,7 @@
-from zeep import CachingClient as Client
 from yaml import safe_dump, safe_load
-from ..common import config, storage, dateparam
+from zeep import CachingClient as Client
+from zeep.transports import Transport
+from ..common import config, storage, dateparam, util
 from ..common.util import quote, sessionID
 from .baseService import autologin
 
@@ -8,8 +9,9 @@ from .baseService import autologin
 def client():
     global service
     if not 'service' in globals():
-        service =  Client(config.load()['url'] + 'WorktimeAccountingService.wsdl')
-        service = client().create_service('{http://blueant.axis.proventis.net/}WorktimeAccountingBinding', address='https://demosystem.blueant.cloud/services/WorktimeAccountingService')
+        transport = util.create_https_transport() 
+        service =  Client(config.load()['url'] + '/WorktimeAccountingService.wsdl', transport=transport)
+        service = client().create_service('{http://blueant.axis.proventis.net/}WorktimeAccountingBinding', address=config.load()['url']+'/services/WorktimeAccountingService')
     return service
 
 
