@@ -1,6 +1,7 @@
 from zeep import CachingClient as Client
-from ..common import config
+from ..common import config, util
 
 
 def client():
-    return Client(config.load()['url'] + 'ProjectsService.wsdl')
+    transport = util.create_https_transport()
+    return Client(config.load()['url'] + '/ProjectsService.wsdl', transport=transport)
