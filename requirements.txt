@@ -1,0 +1,5 @@
+python-dateutil>=2.7.3
+zeep>=3.1.0
+pyyaml>=3.13
+keyring>=13.2.1
+pendulum>=2.0.3

@@ -1,34 +1,16 @@
-FROM python:3-alpine
+FROM python:3-slim
 
-RUN echo http://dl-3.alpinelinux.org/alpine/edge/community \
-         >> /etc/apk/repositories \
- && echo http://dl-3.alpinelinux.org/alpine/edge/main \
-         >> /etc/apk/repositories \
- && apk add --no-cache zsh \
-                       py3-cryptography \
-                       gcc \
-                       libffi-dev \
-                       musl-dev \
-                       openssl-dev \
-                       libxml2-dev \
-                       libxslt-dev
-
+RUN apt-get update && apt-get install -y zsh python3-cryptography
 RUN pip install keyring keyrings.alt
 
-#&& apk del gcc \
-#            libffi-dev \
-#            musl-dev \
-#            openssl-dev \
-#            libxml2-dev \
-#            libxslt-dev
-
-ADD . /src
 ADD ./docker/.zshrc /root/
 
+ADD requirements.txt /
+RUN pip install -r requirements.txt
+
+ADD . /src
 RUN cd /src \
- && python setup.py install \
- && rm -rf /src \
- && mkdir /flik-console
+ && python setup.py install
 
 WORKDIR /flik-console
 
